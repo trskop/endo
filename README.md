@@ -7,10 +7,13 @@
 
 ## Description
 
-**TODO**
+Utilities for [Endo][Endo Definition] data type.
 
 
 
+[Endo Definition]:
+  http://hackage.haskell.org/package/base/docs/Data-Monoid.html#t:Endo
+  "Endo data type definition in base library."
 [Haskell.org]:
   http://www.haskell.org
   "The Haskell Programming Language"
