@@ -1,3 +1,4 @@
+{-# LANGUAGE NoImplicitPrelude #-}
 -- |
 -- Module:       $HEADER$
 -- Description:  Utilities for Endo data type.
@@ -6,7 +7,7 @@
 --
 -- Maintainer:   peter.trsko@gmail.com
 -- Stability:    experimental
--- Portability:  portable
+-- Portability:  NoImplicitPrelude
 --
 -- Utilities for 'Endo' data type from "Data.Monoid" module.
 module Data.Monoid.Endo
@@ -24,6 +25,7 @@ module Data.Monoid.Endo
     )
     where
 
+import Data.Functor (Functor(fmap))
 import Data.Monoid (Endo(..))
 
 import Data.Function.Between ((~@~), (<~@~))
