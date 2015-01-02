@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -10,8 +11,8 @@
 --
 -- Maintainer:   peter.trsko@gmail.com
 -- Stability:    experimental
--- Portability:  DeriveDataTypeable, FlexibleInstances, NoImplicitPrelude,
---               TypeFamilies
+-- Portability:  DeriveDataTypeable, DeriveGeneric, FlexibleInstances,
+--               NoImplicitPrelude, TypeFamilies
 --
 -- Generic folding for various endomorphism representations.
 module Data.Monoid.Endo.Fold
@@ -30,13 +31,18 @@ module Data.Monoid.Endo.Fold
   where
 
 import Control.Applicative (Applicative(pure))
+import Data.Data (Data)
 import Data.Either (Either(Right))
+import qualified Data.Foldable as Foldable (Foldable(foldMap))
 import Data.Function ((.), id)
 import Data.Functor.Identity (Identity(Identity))
 import Data.Maybe (Maybe(Just))
 import Data.Monoid (Monoid(mempty, mconcat), Endo(Endo), (<>))
-import qualified Data.Foldable as Foldable (Foldable(foldMap))
+import Data.Typeable (Typeable)
+import GHC.Generics (Generic)
 import System.IO (IO)
+import Text.Read (Read)
+import Text.Show (Show)
 
 import Control.Monad.Trans.Identity (IdentityT(..))
 
@@ -118,6 +124,7 @@ instance AnEndo (a -> a) where
 -- {{{ Foldable Instances -----------------------------------------------------
 
 newtype Foldable f a = Foldable {getFoldable :: f a}
+    deriving (Data, Generic, Read, Show, Typeable)
 
 instance (Foldable.Foldable f, AnEndo a) => AnEndo (Foldable f a) where
     type EndoOperatesOn (Foldable f a) = EndoOperatesOn a
