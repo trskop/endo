@@ -36,7 +36,7 @@ import Data.Either (Either(Right))
 import qualified Data.Foldable as Foldable (Foldable(foldMap))
 import Data.Function ((.), id)
 import Data.Functor.Identity (Identity(Identity))
-import Data.Maybe (Maybe(Just))
+import Data.Maybe (Maybe(Just, Nothing))
 import Data.Monoid (Monoid(mempty, mconcat), Endo(Endo), (<>))
 import Data.Typeable (Typeable)
 import GHC.Generics (Generic)
@@ -120,6 +120,11 @@ instance AnEndo (Endo a) where
 instance AnEndo (a -> a) where
     type EndoOperatesOn (a -> a) = a
     anEndo = Endo
+
+instance AnEndo a => AnEndo (Maybe a) where
+    type EndoOperatesOn (Maybe a) = EndoOperatesOn a
+    anEndo Nothing  = mempty
+    anEndo (Just e) = anEndo e
 
 -- {{{ Foldable Instances -----------------------------------------------------
 
