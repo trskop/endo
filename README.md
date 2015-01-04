@@ -61,8 +61,7 @@ ways to handle it. Here we will concentrate only few basic techniques to
 illustrate versatility of our approach.
 
 ````Haskell
--- | Trying to set output file to \"\" will result in keeping original
--- value.
+-- | Trying to set output file to \"\" will result in keeping original value.
 setOutputFile2 :: FilePath -> E Config
 setOutputFile2 "" = id
 setOutputFile2 fp = setOutputFile fp
