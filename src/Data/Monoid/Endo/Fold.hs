@@ -28,9 +28,11 @@ module Data.Monoid.Endo.Fold
     -- * Usage Example
     -- $usageExample
 
-    -- * API
+    -- * Generic Endomorphism Folding
       foldEndo
     , dualFoldEndo
+
+    -- ** Type Classes
     , FoldEndoArgs(..)
     , AnEndo(..)
 
@@ -121,8 +123,14 @@ dualFoldEndo = dualFoldEndoArgs mempty
 
 -- {{{ FoldEndoArgs Type Class ------------------------------------------------
 
+-- | Class of arguments for 'foldEndo' and its dual 'dualFoldEndo' functions.
+--
+-- Note that results are instances of this ('FoldEndoArgs') class and
+-- endomorphism representations are instances of 'AnEndo' type class.
 class FoldEndoArgs a where
+    -- | Extracts type of a value that is modified by the result.
     type ResultOperatesOn a
+
     foldEndoArgs     ::       Endo (ResultOperatesOn a)  -> a
     dualFoldEndoArgs :: Dual (Endo (ResultOperatesOn a)) -> a
 #ifdef HAVE_MINIMAL_PRAGMA
@@ -291,11 +299,21 @@ instance
 
 -- {{{ AnEndo Type Class ------------------------------------------------------
 
+-- | Class that represents various endomorphism representation. In other words
+-- anything that encodes @a -> a@ can be instance of this class.
 class AnEndo a where
+    -- | Extract type on which endomorphism operates, e.g. for
+    -- @'Endo' a@ it would be @a@.
     type EndoOperatesOn a
 
-    anEndo    :: a -> Endo (EndoOperatesOn a)
+    -- | Convert value encoding @a -> a@ in to 'Endo'.
+    anEndo :: a -> Endo (EndoOperatesOn a)
 
+    -- | Dual to 'anEndo'. Default implementation:
+    --
+    -- @
+    -- 'aDualEndo' = 'Dual' . 'anEndo'
+    -- @
     aDualEndo :: a -> Dual (Endo (EndoOperatesOn a))
     aDualEndo = Dual . anEndo
 
@@ -642,9 +660,9 @@ instance
 
 -- {{{ Utility Functions ------------------------------------------------------
 
--- | Variant of function @'$' :: (a -> b) -> a -> b@ from "Data.Function"
--- module, but with fixity as @(&) :: a -> (a -> b) -> b@ function from
--- <http://hackage.haskell.org/package/lens lens> package.
+-- | Variant of function @'Data.Function.$' :: (a -> b) -> a -> b@ from
+-- "Data.Function" module, but with fixity as @(&) :: a -> (a -> b) -> b@
+-- function from <http://hackage.haskell.org/package/lens lens package>.
 (&$) :: (a -> b) -> a -> b
 f &$ a = f a
 infixl 1 &$
@@ -653,4 +671,140 @@ infixl 1 &$
 
 -- $usageExample
 --
--- TODO
+-- Lets define simple application @Config@ data type as:
+--
+-- @
+-- data Verbosity = Silent | Normal | Verbose | Annoying
+--   deriving (Show)
+--
+-- data Config = Config
+--     { _verbosity :: Verbosity
+--     , _outputFile :: FilePath
+--     }
+--   deriving (Show)
+-- @
+--
+-- Now lets define setters for @_verbosity@ and @_outputFile@:
+--
+-- @
+-- setVerbosity :: Verbosity -> 'Data.Monoid.Endo.E' Config
+-- setVerbosity b cfg = cfg{_verbosity = b}
+--
+-- setOutputFile :: FilePath -> 'Data.Monoid.Endo.E' Config
+-- setOutputFile b cfg = cfg{_outputFile = b}
+-- @
+--
+-- Note that 'Data.Monoid.Endo.E' is defined in "Data.Monoid.Endo" module and
+-- it looks like:
+--
+-- @
+-- type 'Data.Monoid.Endo.E' a = a -> a
+-- @
+--
+-- Its purpose is to simplify type signatures.
+--
+-- Now lets get to our first example:
+--
+-- @
+-- example1 :: 'Data.Monoid.Endo.E' Config
+-- example1 = 'Data.Monoid.appEndo' '$' 'foldEndo'
+--     '&$' setVerbosity Annoying
+--     '&$' setOutputFile \"an.out.put\"
+-- @
+--
+-- Above example shows us that it is possible to modify @Config@ as if it was a
+-- monoid, but without actually having to state it as such. In practice it is
+-- not always possible to define it as 'Monoid' or at least a @Semigroup@. What
+-- usually works are endomorphisms, like in this example.
+--
+-- Now, 'System.IO.FilePath' has one pathological case, and that is \"\". There
+-- is a lot of ways to handle it. Here we will concentrate only on few basic
+-- techniques to illustrate versatility of our approach.
+--
+-- @
+-- -- | Trying to set output file to \"\" will result in keeping original
+-- -- value.
+-- setOutputFile2 :: FilePath -> 'Data.Monoid.Endo.E' Config
+-- setOutputFile2 \"\" = id
+-- setOutputFile2 fp = setOutputFile fp
+--
+-- example2 :: 'Data.Monoid.Endo.E' Config
+-- example2 = 'Data.Monoid.appEndo' $ 'foldEndo'
+--     '&$' setVerbosity Annoying
+--     '&$' setOutputFile2 \"an.out.put\"
+-- @
+--
+-- Same as above, but exploits @instance 'AnEndo' a => 'AnEndo' 'Maybe' a@:
+--
+-- @
+-- setOutputFile3 :: FilePath -> Maybe ('Data.Monoid.Endo.E' Config)
+-- setOutputFile3 "" = Nothing
+-- setOutputFile3 fp = Just $ setOutputFile fp
+--
+-- example3 :: 'Data.Monoid.Endo.E' Config
+-- example3 = 'Data.Monoid.appEndo' $ 'foldEndo'
+--     '&$' setVerbosity Annoying
+--     '&$' setOutputFile3 \"an.out.put\"
+-- @
+--
+-- Following example uses common pattern of using 'Either' as error reporting
+-- monad. This approach can be easily modified for arbitrary error reporting
+-- monad.
+--
+-- @
+-- setOutputFile4 :: FilePath -> Either String ('Data.Monoid.Endo.E' Config)
+-- setOutputFile4 "" = Left \"Output file: Empty file path.\"
+-- setOutputFile4 fp = Right $ setOutputFile fp
+--
+-- example4 :: Either String ('Data.Monoid.Endo.E' Config)
+-- example4 = 'Data.Functor.fmap' 'Data.Monoid.appEndo' $ 'foldEndo'
+--     'Control.Applicative.<*>' 'pure' (setVerbosity Annoying)
+--     'Control.Applicative.<*>' setOutputFile4 \"an.out.put\"
+-- @
+--
+-- Notice, that above example uses applicative style. Normally when using this
+-- style, for setting record values, one needs to keep in sync order of
+-- constructor arguments and order of operations. Using 'foldEndo' (and its
+-- dual 'dualFoldEndo') doesn't have this restriction.
+--
+-- Instead of setter functions one may want to use lenses (in terms of
+-- <http://hackage.haskell.org/package/lens lens package>):
+--
+-- @
+-- verbosity :: Lens' Config Verbosity
+-- verbosity =
+--     _verbosity 'Data.Function.Between.~@@^>' \\s b -> s{_verbosity = b}
+--
+-- outputFile :: Lens' Config FilePath
+-- outputFile =
+--     _outputFile 'Data.Function.Between.~@@^>' \\s b -> s{_outputFile = b}
+-- @
+--
+-- Now setting values of @Config@ would look like:
+--
+-- @
+-- example5 :: 'Data.Monoid.Endo.E' Config
+-- example5 = 'Data.Monoid.appEndo' $ 'foldEndo'
+--     '&$' verbosity  .~ Annoying
+--     '&$' outputFile .~ \"an.out.put\"
+-- @
+--
+-- Probably one of the most interesting things that can be done with this
+-- module is following:
+--
+-- @
+-- instance 'AnEndo' Verbosity where
+--     type 'EndoOperatesOn' Verbosity = Config
+--     'anEndo' = Endo . set verbosity
+--
+-- newtype OutputFile = OutputFile FilePath
+--
+-- instance 'AnEndo' OutputFile where
+--     type 'EndoOperatesOn' OutputFile = Config
+--     'anEndo' (OutputFile fp) = 'Endo' $ outputFile .~ fp
+--
+-- example6 :: 'Data.Monoid.Endo.E' Config
+-- example6 = 'Data.Monoid.appEndo' $ 'foldEndo'
+--     '&$' Annoying
+--     '&$' OutputFile \"an.out.put\"
+-- @

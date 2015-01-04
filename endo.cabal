@@ -14,9 +14,17 @@ category:               Data
 build-type:             Simple
 cabal-version:          >=1.10
 
+-- Examples require lens package in addition to this packackage's dependencies.
+-- When using sandbox it is possible to use "cabal repl" to test examples by
+-- using following command:
+--
+--     cabal repl --ghc-options="-iexample -package lens"
 extra-source-files:
     ChangeLog.md
   , README.md
+  , example/Example/Config/*.hs
+  , example/Example/*.hs
+  , example/*.hs
 
 flag pedantic
   description:          Pass additional warning flags to GHC.

@@ -1,0 +1,35 @@
+{-# LANGUAGE NoImplicitPrelude #-}
+-- |
+-- Module:       $HEADER$
+-- Description:  Example 3
+-- Copyright:    (c) 2015 Peter Trsko
+-- License:      BSD3
+--
+-- Maintainer:   peter.trsko@gmail.com
+-- Stability:    experimental
+-- Portability:  NoImplicitPrelude
+--
+-- Example 3.
+module Example3
+  where
+
+import Data.Function (($))
+import Data.Maybe (Maybe(Just, Nothing))
+import Data.Monoid (Endo(appEndo))
+import System.IO (FilePath)
+
+import Data.Monoid.Endo (E)
+import Data.Monoid.Endo.Fold ((&$), foldEndo)
+
+import Example.Config (Config, Verbosity(Annoying))
+import Example.Config.Setters (setOutputFile, setVerbosity)
+
+
+setOutputFile3 :: FilePath -> Maybe (E Config)
+setOutputFile3 "" = Nothing
+setOutputFile3 fp = Just $ setOutputFile fp
+
+example3 :: E Config
+example3 = appEndo $ foldEndo
+    &$ setVerbosity Annoying
+    &$ setOutputFile3 "an.out.put"
