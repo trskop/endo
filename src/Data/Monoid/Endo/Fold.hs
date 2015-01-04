@@ -36,6 +36,9 @@ module Data.Monoid.Endo.Fold
 
     -- ** Type Wrappers
     , WrappedFoldable(..)
+
+    -- * Utility Functions
+    , (&$)
     )
   where
 
@@ -636,6 +639,17 @@ instance
 
 -- }}} Instances For Tuples ---------------------------------------------------
 -- }}} AnEndo Type Class ------------------------------------------------------
+
+-- {{{ Utility Functions ------------------------------------------------------
+
+-- | Variant of function @'$' :: (a -> b) -> a -> b@ from "Data.Function"
+-- module, but with fixity as @(&) :: a -> (a -> b) -> b@ function from
+-- <http://hackage.haskell.org/package/lens lens> package.
+(&$) :: (a -> b) -> a -> b
+f &$ a = f a
+infixl 1 &$
+
+-- }}} Utility Functions ------------------------------------------------------
 
 -- $usageExample
 --
