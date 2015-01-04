@@ -219,11 +219,9 @@ instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (ListT f r) where
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 
 instance
-#ifdef APPLICATIVE_MONAD
     ( Monad m
-#else
-    ( Functor m
-    , Monad m
+#ifndef APPLICATIVE_MONAD
+    , Functor m
 #endif
     , FoldEndoArgs r
     ) => FoldEndoArgs (MaybeT m r) where
@@ -237,11 +235,9 @@ instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (ReaderT r' f r) where
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 
 instance
-#if APPLICATIVE_MONAD
-    ( Functor m
-    , Monad m
-#else
     ( Monad m
+#ifndef APPLICATIVE_MONAD
+    , Functor m
 #endif
     , Monoid w
     , FoldEndoArgs r
@@ -252,11 +248,9 @@ instance
     dualFoldEndoArgs = return . dualFoldEndoArgs
 
 instance
-#ifndef APPLICATIVE_MONAD
-    ( Functor m
-    , Monad m
-#else
     ( Monad m
+#ifndef APPLICATIVE_MONAD
+    , Functor m
 #endif
     , Monoid w
     , FoldEndoArgs r
