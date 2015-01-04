@@ -1,6 +1,6 @@
 name:                   endo
 version:                0.1.0.0
-synopsis:               Utilities for Endo data type.
+synopsis:               Endomorphism utilities.
 description:
   TODO
 
@@ -46,8 +46,10 @@ library
     , TypeFamilies
 
   build-depends:
+    -- {{{ Distributed with GHC or Haskell Platform ---------------------------
       base >=4.6 && <4.8
     , transformers >=0.3 && <0.4
+    -- }}} Distributed with GHC or Haskell Platform ---------------------------
 
     , between == 0.9.*
 
@@ -62,3 +64,7 @@ library
       -fwarn-tabs
       -fwarn-implicit-prelude
 --    -Werror
+
+source-repository head
+  type:                 git
+  location:             git://github.com/trskop/endo.git
