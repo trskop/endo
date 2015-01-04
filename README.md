@@ -107,7 +107,7 @@ constructor arguments and order of operations. Using `foldEndo` (and its
 dual `dualFoldEndo`) doesn't have this restriction.
 
 Instead of setter functions one may want to use lenses (in terms of
-[lens packagei][[Hackage: Lens]]):
+[lens package][Hackage: Lens]):
 
 ````Haskell
 verbosity :: Lens' Config Verbosity
