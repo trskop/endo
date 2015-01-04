@@ -4,6 +4,13 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE TypeFamilies #-}
+
+#if MIN_VERSION_transformers(0,4,0)
+-- ExceptT was introduced in transformers == 0.4.0.0 and it deprecated ErrorT.
+-- That is also the reason why ErrorT instance is not provided.
+#define HAVE_EXCEPTT
+#endif
+
 -- |
 -- Module:       $HEADER$
 -- Description:  Generic folding for various endomorphism representations.
@@ -33,10 +40,14 @@ module Data.Monoid.Endo.Fold
   where
 
 import Control.Applicative (Applicative(pure))
+import Control.Monad (Monad(return))
 import Data.Data (Data)
 import Data.Either (Either(Right))
 import Data.Foldable (Foldable(foldMap))
 import Data.Function ((.), id)
+#ifndef APPLICATIVE_MONAD
+import Data.Functor (Functor)
+#endif
 import Data.Functor.Identity (Identity(Identity))
 import Data.Maybe (Maybe(Just, Nothing))
 import Data.Monoid (Dual(Dual), Endo(Endo), Monoid(mempty, mconcat), (<>))
@@ -46,7 +57,22 @@ import System.IO (IO)
 import Text.Read (Read)
 import Text.Show (Show)
 
-import Control.Monad.Trans.Identity (IdentityT(..))
+#if HAVE_EXCEPTT
+import Control.Monad.Trans.Except (ExceptT)
+#endif
+import Control.Monad.Trans.Identity (IdentityT)
+import Control.Monad.Trans.List (ListT)
+import Control.Monad.Trans.Maybe (MaybeT)
+import Control.Monad.Trans.Reader (ReaderT)
+import Control.Monad.Trans.RWS (RWST)
+import qualified Control.Monad.Trans.RWS.Strict as Strict (RWST)
+import Control.Monad.Trans.State (StateT)
+import qualified Control.Monad.Trans.State.Strict as Strict (StateT)
+import Control.Monad.Trans.Writer (WriterT)
+import qualified Control.Monad.Trans.Writer.Strict as Strict (WriterT)
+import Data.Functor.Compose (Compose)
+import Data.Functor.Product (Product)
+import Data.Functor.Reverse (Reverse)
 
 
 -- | Fold all variously represented endomorphisms in to one endomorphism.
@@ -120,11 +146,6 @@ instance FoldEndoArgs (Dual (Endo a)) where
     foldEndoArgs     = Dual
     dualFoldEndoArgs = id
 
-instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (IdentityT f r) where
-    type ResultOperatesOn (IdentityT f r) = ResultOperatesOn r
-    foldEndoArgs     = IdentityT . pure . foldEndoArgs
-    dualFoldEndoArgs = IdentityT . pure . dualFoldEndoArgs
-
 instance FoldEndoArgs r => FoldEndoArgs (Either e r) where
     type ResultOperatesOn (Either e r) = ResultOperatesOn r
     foldEndoArgs     = Right . foldEndoArgs
@@ -144,6 +165,124 @@ instance FoldEndoArgs r => FoldEndoArgs (Maybe r) where
     type ResultOperatesOn (Maybe r) = ResultOperatesOn r
     foldEndoArgs     = Just . foldEndoArgs
     dualFoldEndoArgs = Just . dualFoldEndoArgs
+
+-- {{{ Transformers -----------------------------------------------------------
+
+-- {{{ Functor Transformers ---------------------------------------------------
+
+instance
+    (Applicative f, Applicative g, FoldEndoArgs r)
+    => FoldEndoArgs (Compose f g r)
+  where
+    type ResultOperatesOn (Compose f g r) = ResultOperatesOn r
+    foldEndoArgs     = pure . foldEndoArgs
+    dualFoldEndoArgs = pure . dualFoldEndoArgs
+
+instance
+    (Applicative f, Applicative g, FoldEndoArgs r)
+    => FoldEndoArgs (Product f g r)
+  where
+    type ResultOperatesOn (Product f g r) = ResultOperatesOn r
+    foldEndoArgs     = pure . foldEndoArgs
+    dualFoldEndoArgs = pure . dualFoldEndoArgs
+
+-- }}} Functor Transformers ---------------------------------------------------
+
+-- {{{ Monad Transformers -----------------------------------------------------
+
+instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (IdentityT f r) where
+    type ResultOperatesOn (IdentityT f r) = ResultOperatesOn r
+    foldEndoArgs     = pure . foldEndoArgs
+    dualFoldEndoArgs = pure . dualFoldEndoArgs
+
+#if HAVE_EXCEPTT
+instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (ExceptT e f r) where
+    type ResultOperatesOn (ExceptT e f r) = ResultOperatesOn r
+    foldEndoArgs     = pure . foldEndoArgs
+    dualFoldEndoArgs = pure . dualFoldEndoArgs
+#endif
+
+instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (ListT f r) where
+    type ResultOperatesOn (ListT f r) = ResultOperatesOn r
+    foldEndoArgs     = pure . foldEndoArgs
+    dualFoldEndoArgs = pure . dualFoldEndoArgs
+
+instance
+#ifdef APPLICATIVE_MONAD
+    ( Monad m
+#else
+    ( Functor m
+    , Monad m
+#endif
+    , FoldEndoArgs r
+    ) => FoldEndoArgs (MaybeT m r) where
+    type ResultOperatesOn (MaybeT m r) = ResultOperatesOn r
+    foldEndoArgs     = return . foldEndoArgs
+    dualFoldEndoArgs = return . dualFoldEndoArgs
+
+instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (ReaderT r' f r) where
+    type ResultOperatesOn (ReaderT r' f r) = ResultOperatesOn r
+    foldEndoArgs     = pure . foldEndoArgs
+    dualFoldEndoArgs = pure . dualFoldEndoArgs
+
+instance
+#if APPLICATIVE_MONAD
+    ( Functor m
+    , Monad m
+#else
+    ( Monad m
+#endif
+    , Monoid w
+    , FoldEndoArgs r
+    ) => FoldEndoArgs (RWST r' w s m r)
+  where
+    type ResultOperatesOn (RWST r' w s m r) = ResultOperatesOn r
+    foldEndoArgs     = return . foldEndoArgs
+    dualFoldEndoArgs = return . dualFoldEndoArgs
+
+instance
+#ifndef APPLICATIVE_MONAD
+    ( Functor m
+    , Monad m
+#else
+    ( Monad m
+#endif
+    , Monoid w
+    , FoldEndoArgs r
+    ) => FoldEndoArgs (Strict.RWST r' w s m r)
+  where
+    type ResultOperatesOn (Strict.RWST r' w s m r) = ResultOperatesOn r
+    foldEndoArgs     = return . foldEndoArgs
+    dualFoldEndoArgs = return . dualFoldEndoArgs
+
+instance (Monad m, FoldEndoArgs r) => FoldEndoArgs (StateT s m r) where
+    type ResultOperatesOn (StateT s f r) = ResultOperatesOn r
+    foldEndoArgs     = return . foldEndoArgs
+    dualFoldEndoArgs = return . dualFoldEndoArgs
+
+instance (Monad m, FoldEndoArgs r) => FoldEndoArgs (Strict.StateT s m r) where
+    type ResultOperatesOn (Strict.StateT s f r) = ResultOperatesOn r
+    foldEndoArgs     = return . foldEndoArgs
+    dualFoldEndoArgs = return . dualFoldEndoArgs
+
+instance
+    (Applicative f, FoldEndoArgs r, Monoid w) => FoldEndoArgs (WriterT w f r)
+  where
+    type ResultOperatesOn (WriterT w f r) = ResultOperatesOn r
+    foldEndoArgs     = pure . foldEndoArgs
+    dualFoldEndoArgs = pure . dualFoldEndoArgs
+
+instance
+    (Applicative f, FoldEndoArgs r, Monoid w)
+    => FoldEndoArgs (Strict.WriterT w f r)
+  where
+    type ResultOperatesOn (Strict.WriterT w f r) = ResultOperatesOn r
+    foldEndoArgs     = pure . foldEndoArgs
+    dualFoldEndoArgs = pure . dualFoldEndoArgs
+
+-- }}} Monad Transformers -----------------------------------------------------
+
+-- }}} Transformers -----------------------------------------------------------
 
 -- {{{ FoldEndoArgs Type Class ------------------------------------------------
 
@@ -193,6 +332,16 @@ instance AnEndo a => AnEndo [a] where
     type EndoOperatesOn [a] = EndoOperatesOn a
     anEndo    = anEndo    . WrapFoldable
     aDualEndo = aDualEndo . WrapFoldable
+
+-- {{{ Transformers -----------------------------------------------------------
+
+-- | Fold in reverese order.
+instance (Foldable f, AnEndo a) => AnEndo (Reverse f a) where
+    type EndoOperatesOn (Reverse f a) = EndoOperatesOn a
+    anEndo    = anEndo    . WrapFoldable
+    aDualEndo = aDualEndo . WrapFoldable
+
+-- }}} Transformers -----------------------------------------------------------
 
 -- }}} Foldable Instances -----------------------------------------------------
 
