@@ -163,13 +163,11 @@ class AnEndo a where
 
 instance AnEndo (Endo a) where
     type EndoOperatesOn (Endo a) = a
-    anEndo    = id
-    aDualEndo = Dual
+    anEndo = id
 
 instance AnEndo (a -> a) where
     type EndoOperatesOn (a -> a) = a
-    anEndo    = Endo
-    aDualEndo = Dual . Endo
+    anEndo = Endo
 
 instance AnEndo a => AnEndo (Maybe a) where
     type EndoOperatesOn (Maybe a) = EndoOperatesOn a
