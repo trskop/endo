@@ -28,14 +28,14 @@ module Data.Monoid.Endo.Fold
     , AnEndo(..)
 
     -- ** Type Wrappers
-    , Foldable(..)
+    , WrapFoldable(..)
     )
   where
 
 import Control.Applicative (Applicative(pure))
 import Data.Data (Data)
 import Data.Either (Either(Right))
-import qualified Data.Foldable as Foldable (Foldable(foldMap))
+import Data.Foldable (Foldable(foldMap))
 import Data.Function ((.), id)
 import Data.Functor.Identity (Identity(Identity))
 import Data.Maybe (Maybe(Just, Nothing))
@@ -179,18 +179,22 @@ instance AnEndo a => AnEndo (Maybe a) where
 
 -- {{{ Foldable Instances -----------------------------------------------------
 
-newtype Foldable f a = Foldable {getFoldable :: f a}
+-- | Wrapper for 'Foldable' instances.
+--
+-- This allows using 'foldEndo' and 'dualFoldEndo' for any 'Foldable' instance
+-- without the need for @OverlappingInstances@ language extension.
+newtype WrapFoldable f a = WrapFoldable {getFoldable :: f a}
     deriving (Data, Generic, Read, Show, Typeable)
 
-instance (Foldable.Foldable f, AnEndo a) => AnEndo (Foldable f a) where
-    type EndoOperatesOn (Foldable f a) = EndoOperatesOn a
-    anEndo    (Foldable fa) = Foldable.foldMap anEndo fa
-    aDualEndo (Foldable fa) = Foldable.foldMap aDualEndo fa
+instance (Foldable f, AnEndo a) => AnEndo (WrapFoldable f a) where
+    type EndoOperatesOn (WrapFoldable f a) = EndoOperatesOn a
+    anEndo    (WrapFoldable fa) = foldMap anEndo    fa
+    aDualEndo (WrapFoldable fa) = foldMap aDualEndo fa
 
 instance AnEndo a => AnEndo [a] where
     type EndoOperatesOn [a] = EndoOperatesOn a
-    anEndo    = anEndo    . Foldable
-    aDualEndo = aDualEndo . Foldable
+    anEndo    = anEndo    . WrapFoldable
+    aDualEndo = aDualEndo . WrapFoldable
 
 -- }}} Foldable Instances -----------------------------------------------------
 
