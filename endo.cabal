@@ -43,6 +43,9 @@ library
 
     , between == 0.9.*
 
+  if impl(GHC >= 7.8)
+    cpp-options:        -DHAVE_MINIMAL_PRAGMA
+
   ghc-options:          -Wall
   if flag(pedantic)
     ghc-options:

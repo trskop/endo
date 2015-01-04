@@ -96,7 +96,7 @@ class FoldEndoArgs a where
     type ResultOperatesOn a
     foldEndoArgs     ::       Endo (ResultOperatesOn a)  -> a
     dualFoldEndoArgs :: Dual (Endo (ResultOperatesOn a)) -> a
-#if __GLASGOW_HASKELL__ >= 708
+#ifdef HAVE_MINIMAL_PRAGMA
     {-# MINIMAL foldEndoArgs, dualFoldEndoArgs #-}
 #endif
 
@@ -157,7 +157,7 @@ class AnEndo a where
     aDualEndo :: a -> Dual (Endo (EndoOperatesOn a))
     aDualEndo = Dual . anEndo
 
-#if __GLASGOW_HASKELL__ >= 708
+#if HAVE_MINIMAL_PRAGMA
     {-# MINIMAL anEndo #-}
 #endif
 
