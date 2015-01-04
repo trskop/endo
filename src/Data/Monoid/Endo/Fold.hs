@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -11,7 +12,7 @@
 --
 -- Maintainer:   peter.trsko@gmail.com
 -- Stability:    experimental
--- Portability:  DeriveDataTypeable, DeriveGeneric, FlexibleInstances,
+-- Portability:  CPP, DeriveDataTypeable, DeriveGeneric, FlexibleInstances,
 --               NoImplicitPrelude, TypeFamilies
 --
 -- Generic folding for various endomorphism representations.
@@ -95,6 +96,9 @@ class FoldEndoArgs a where
     type ResultOperatesOn a
     foldEndoArgs     ::       Endo (ResultOperatesOn a)  -> a
     dualFoldEndoArgs :: Dual (Endo (ResultOperatesOn a)) -> a
+#if __GLASGOW_HASKELL__ >= 708
+    {-# MINIMAL foldEndoArgs, dualFoldEndoArgs #-}
+#endif
 
 instance
     ( AnEndo a
@@ -152,6 +156,10 @@ class AnEndo a where
 
     aDualEndo :: a -> Dual (Endo (EndoOperatesOn a))
     aDualEndo = Dual . anEndo
+
+#if __GLASGOW_HASKELL__ >= 708
+    {-# MINIMAL anEndo #-}
+#endif
 
 instance AnEndo (Endo a) where
     type EndoOperatesOn (Endo a) = a
