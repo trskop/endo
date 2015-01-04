@@ -712,7 +712,7 @@ infixl 1 &$
 -- usually works are endomorphisms, like in this example.
 --
 -- Now, 'System.IO.FilePath' has one pathological case, and that is \"\". There
--- is a lot of ways to handle it. Here we will concentrate only on few basic
+-- is a lot of ways to handle it. Here we will concentrate only few basic
 -- techniques to illustrate versatility of our approach.
 --
 -- @

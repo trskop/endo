@@ -57,7 +57,7 @@ not always possible to define it as `Monoid` or at least a `Semigroup`. What
 usually works are endomorphisms, like in this example.
 
 Now, `FilePath` has one pathological case, and that is `""`. There is a lot of
-ways to handle it. Here we will concentrate only on few basic techniques to
+ways to handle it. Here we will concentrate only few basic techniques to
 illustrate versatility of our approach.
 
 ````Haskell
