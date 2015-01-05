@@ -44,6 +44,7 @@ module Data.Monoid.Endo.Fold
 
     -- * Utility Functions
     , (&$)
+    , (<&$>)
     )
   where
 
@@ -52,9 +53,7 @@ import Control.Monad (Monad(return))
 import Data.Either (Either(Right))
 import Data.Foldable (Foldable(foldMap))
 import Data.Function ((.), id)
-#ifndef APPLICATIVE_MONAD
-import Data.Functor (Functor)
-#endif
+import Data.Functor (Functor(fmap))
 import Data.Functor.Identity (Identity(Identity))
 import Data.Maybe (Maybe(Just, Nothing))
 import Data.Monoid (Dual(Dual), Endo(Endo), Monoid(mempty, mconcat), (<>))
@@ -675,6 +674,13 @@ instance
 f &$ a = f a
 infixl 1 &$
 
+-- | Variant of function
+-- @('Data.Functor.<$>') :: 'Data.Functor.Functor' f => (a -> b) -> a -> b@
+-- from "Data.Function" module, but with fixity as '&$' function.
+(<&$>) :: Functor f => (a -> b) -> f a -> f b
+(<&$>) = fmap
+infixl 1 <&$>
+
 -- }}} Utility Functions ------------------------------------------------------
 
 -- $usageExample
@@ -765,7 +771,7 @@ infixl 1 &$
 -- setOutputFile4 fp = Right $ setOutputFile fp
 --
 -- example4 :: Either String ('Data.Monoid.Endo.E' Config)
--- example4 = 'Data.Functor.fmap' 'Data.Monoid.appEndo' $ 'foldEndo'
+-- example4 = 'Data.Monoid.appEndo' '<&$>' 'foldEndo'
 --     'Control.Applicative.<*>' 'pure' (setVerbosity Annoying)
 --     'Control.Applicative.<*>' setOutputFile4 \"an.out.put\"
 -- @
