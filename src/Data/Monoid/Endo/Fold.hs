@@ -261,12 +261,12 @@ instance
     dualFoldEndoArgs = return . dualFoldEndoArgs
 
 instance (Monad m, FoldEndoArgs r) => FoldEndoArgs (StateT s m r) where
-    type ResultOperatesOn (StateT s f r) = ResultOperatesOn r
+    type ResultOperatesOn (StateT s m r) = ResultOperatesOn r
     foldEndoArgs     = return . foldEndoArgs
     dualFoldEndoArgs = return . dualFoldEndoArgs
 
 instance (Monad m, FoldEndoArgs r) => FoldEndoArgs (Strict.StateT s m r) where
-    type ResultOperatesOn (Strict.StateT s f r) = ResultOperatesOn r
+    type ResultOperatesOn (Strict.StateT s m r) = ResultOperatesOn r
     foldEndoArgs     = return . foldEndoArgs
     dualFoldEndoArgs = return . dualFoldEndoArgs
 
