@@ -110,10 +110,10 @@ Instead of setter functions one may want to use lenses (in terms of
 
 ````Haskell
 verbosity :: Lens' Config Verbosity
-verbosity = _verbosity ~@@^> \\s b -> s{_verbosity = b}
+verbosity = _verbosity ~@@^> \s b -> s{_verbosity = b}
 
 outputFile :: Lens' Config FilePath
-outputFile = _outputFile ~@@^> \\s b -> s{_outputFile = b}
+outputFile = _outputFile ~@@^> \s b -> s{_outputFile = b}
 ````
 
 Now setting values of `Config` would look like:
