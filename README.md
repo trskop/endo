@@ -95,7 +95,7 @@ setOutputFile4 "" = Left "Output file: Empty file path."
 setOutputFile4 fp = Right $ setOutputFile fp
 
 example4 :: Either String (E Config)
-example4 = fmap appEndo $ foldEndo
+example4 = appEndo <&$> foldEndo
     <*> pure (setVerbosity Annoying)
     <*> setOutputFile4 "an.out.put"
 ````
