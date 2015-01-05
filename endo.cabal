@@ -55,6 +55,7 @@ library
 
   if impl(GHC >= 7.8)
     cpp-options:        -DHAVE_MINIMAL_PRAGMA
+                        -DKIND_POLYMORPHIC_TYPEABLE
   if impl(GHC >= 7.9)
     cpp-options:        -DAPPLICATIVE_MONAD
 

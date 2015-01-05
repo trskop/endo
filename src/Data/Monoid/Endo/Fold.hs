@@ -1,9 +1,12 @@
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE TypeFamilies #-}
+
+#ifdef KIND_POLYMORPHIC_TYPEABLE
+{-# LANGUAGE DeriveDataTypeable #-}
+#endif
 
 #if MIN_VERSION_transformers(0,4,0)
 -- ExceptT was introduced in transformers == 0.4.0.0 and it deprecated ErrorT.
@@ -46,7 +49,6 @@ module Data.Monoid.Endo.Fold
 
 import Control.Applicative (Applicative(pure))
 import Control.Monad (Monad(return))
-import Data.Data (Data)
 import Data.Either (Either(Right))
 import Data.Foldable (Foldable(foldMap))
 import Data.Function ((.), id)
@@ -56,11 +58,15 @@ import Data.Functor (Functor)
 import Data.Functor.Identity (Identity(Identity))
 import Data.Maybe (Maybe(Just, Nothing))
 import Data.Monoid (Dual(Dual), Endo(Endo), Monoid(mempty, mconcat), (<>))
-import Data.Typeable (Typeable)
 import GHC.Generics (Generic)
 import System.IO (IO)
 import Text.Read (Read)
 import Text.Show (Show)
+
+#ifdef KIND_POLYMORPHIC_TYPEABLE
+import Data.Data (Data)
+import Data.Typeable (Typeable)
+#endif
 
 #if HAVE_EXCEPTT
 import Control.Monad.Trans.Except (ExceptT)
@@ -336,7 +342,15 @@ instance AnEndo a => AnEndo (Maybe a) where
 -- This allows using 'foldEndo' and 'dualFoldEndo' for any 'Foldable' instance
 -- without the need for @OverlappingInstances@ language extension.
 newtype WrappedFoldable f a = WrapFoldable {getFoldable :: f a}
-    deriving (Data, Generic, Read, Show, Typeable)
+  deriving
+    ( Generic
+    , Read
+    , Show
+#ifdef KIND_POLYMORPHIC_TYPEABLE
+    , Data
+    , Typeable
+#endif
+    )
 
 instance (Foldable f, AnEndo a) => AnEndo (WrappedFoldable f a) where
     type EndoOperatesOn (WrappedFoldable f a) = EndoOperatesOn a
