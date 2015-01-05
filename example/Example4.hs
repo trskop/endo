@@ -16,13 +16,12 @@ module Example4
 import Control.Applicative (Applicative((<*>), pure))
 import Data.Either (Either(Left, Right))
 import Data.Function (($))
-import Data.Functor (Functor(fmap))
 import Data.Monoid (Endo(appEndo))
 import Data.String (String)
 import System.IO (FilePath)
 
 import Data.Monoid.Endo (E)
-import Data.Monoid.Endo.Fold (foldEndo)
+import Data.Monoid.Endo.Fold (foldEndo, (<&$>))
 
 import Example.Config (Config, Verbosity(Annoying))
 import Example.Config.Setters (setOutputFile, setVerbosity)
@@ -33,6 +32,6 @@ setOutputFile4 "" = Left "Output file: Empty file path."
 setOutputFile4 fp = Right $ setOutputFile fp
 
 example4 :: Either String (E Config)
-example4 = fmap appEndo $ foldEndo
+example4 = appEndo <&$> foldEndo
     <*> pure (setVerbosity Annoying)
     <*> setOutputFile4 "an.out.put"
