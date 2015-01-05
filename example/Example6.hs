@@ -20,7 +20,7 @@ import System.IO (FilePath)
 
 import Control.Lens ((.~), set)
 import Data.Monoid.Endo (E)
-import Data.Monoid.Endo.Fold (AnEndo(EndoOperatesOn, anEndo), (&$), foldEndo)
+import Data.Monoid.Endo.Fold (AnEndo(anEndo), EndoOperatesOn, (&$), foldEndo)
 
 import Example.Config (Config, Verbosity(Annoying))
 import Example.Config.Lens (outputFile, verbosity)
@@ -38,6 +38,6 @@ instance AnEndo OutputFile where
     anEndo (OutputFile fp) = Endo $ outputFile .~ fp
 
 example6 :: E Config
-example6 = Data.Monoid.appEndo $ foldEndo
+example6 = appEndo $ foldEndo
     &$ Annoying
     &$ OutputFile "an.out.put"
