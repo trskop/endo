@@ -70,7 +70,7 @@ import Data.Data (Data)
 import Data.Typeable (Typeable)
 #endif
 
-#if HAVE_EXCEPTT
+#ifdef HAVE_EXCEPTT
 import Control.Monad.Trans.Except (ExceptT)
 #endif
 import Control.Monad.Trans.Identity (IdentityT)
@@ -217,8 +217,15 @@ instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (IdentityT f r) where
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 
-#if HAVE_EXCEPTT
-instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (ExceptT e f r) where
+#ifdef HAVE_EXCEPTT
+instance
+    ( Monad m
+#ifndef APPLICATIVE_MONAD
+    , Functor m
+#endif
+    , FoldEndoArgs r
+    ) => FoldEndoArgs (ExceptT e m r)
+  where
     type ResultOperatesOn (ExceptT e f r) = ResultOperatesOn r
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
