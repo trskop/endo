@@ -209,7 +209,7 @@ instance
 
 -- {{{ Monad Transformers -----------------------------------------------------
 
--- | This instance can be used to in cases when there is no 'FoldEndoArgs'
+-- | This instance can be used in cases when there is no 'FoldEndoArgs'
 -- instance for a specific 'Applicative' functor. Example:
 --
 -- @
