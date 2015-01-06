@@ -7,14 +7,15 @@ description:
   used for various purposes, including as a builder.
   .
   Here is an example how to use with
-  <http://hackage.haskell.org/package/optparse-applicative optparse-applicative>:
+  <http://hackage.haskell.org/package/optparse-applicative optparse-applicative>
+  package:
   .
   > data Verbosity = Silent | Normal | Verbose | Annoying
   >   deriving (Show)
-  >
+  .
   > data Config = Config Verbosity FilePath
   >   deriving (Show)
-  >
+  .
   > options :: Parser Config
   > options = runIdentityT $ runEndo defaultConfig <$> options'
   >   where
@@ -28,12 +29,12 @@ description:
   >
   >     defaultConfig :: Config
   >     defaultConfig = Config Normal ""
-  >
+  .
   > main :: IO ()
   > main = execParser (info options fullDesc) >>= print
   .
-  >>> :main -o an.out.put --annoying
-  Config Annoying "an.out.put"
+  > ghci> :main -o an.out.put --annoying
+  > Config Annoying "an.out.put"
   .
   For details how individual option parsers look like see module
   "Data.Monoid.Endo.Fold" which contains other examples as well as this one.
@@ -108,3 +109,8 @@ library
 source-repository head
   type:                 git
   location:             git://github.com/trskop/endo.git
+
+source-repository this
+  type:                 git
+  location:             git://github.com/trskop/endo.git
+  tag:                  0.1.0.0
