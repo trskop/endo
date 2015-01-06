@@ -31,7 +31,7 @@ import Data.Monoid (Endo(..))
 import Data.Function.Between ((~@~), (<~@~))
 
 
--- | Type synonym for endomorphsm; it can be used simplify type signatures.
+-- | Type synonym for endomorphsm; it can be used to simplify type signatures.
 type E a = a -> a
 
 -- | Transform function wrapped in 'Endo'.
