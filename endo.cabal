@@ -87,7 +87,7 @@ library
   build-depends:
     -- {{{ Distributed with GHC or Haskell Platform ---------------------------
       base >=4.6 && <4.8
-    , transformers >=0.3 && <0.4
+    , transformers >=0.3 && <0.5
     -- }}} Distributed with GHC or Haskell Platform ---------------------------
 
     , between == 0.9.*
