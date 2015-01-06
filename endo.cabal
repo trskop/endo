@@ -39,6 +39,7 @@ description:
   "Data.Monoid.Endo.Fold" which contains other examples as well as this one.
 
 homepage:               https://github.com/trskop/endo
+bug-reports:            https://github.com/trskop/endo/issues
 license:                BSD3
 license-file:           LICENSE
 author:                 Peter Trško
