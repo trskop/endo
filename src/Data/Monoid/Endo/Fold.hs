@@ -160,11 +160,6 @@ instance FoldEndoArgs (Endo a) where
     foldEndoArgs              = id
     dualFoldEndoArgs (Dual e) = e
 
-instance FoldEndoArgs (Dual (Endo a)) where
-    type ResultOperatesOn (Dual (Endo a)) = a
-    foldEndoArgs     = Dual
-    dualFoldEndoArgs = id
-
 instance FoldEndoArgs r => FoldEndoArgs (Either e r) where
     type ResultOperatesOn (Either e r) = ResultOperatesOn r
     foldEndoArgs     = Right . foldEndoArgs
