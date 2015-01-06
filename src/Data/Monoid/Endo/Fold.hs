@@ -840,7 +840,7 @@ infixl 1 <&$>
 --     options' = foldEndo
 --         \<*\> outputOption     -- IdentityT Parser (Maybe (E Config))
 --         \<*\> verbosityOption  -- IdentityT Parser (Maybe (E Config))
---         \<*\> annoyingFlag     -- IdentityT Parser (Maybe (E Config))
+--         \<*\> annoyingFlag     -- IdentityT Parser (E Config)
 --         \<*\> silentFlag       -- IdentityT Parser (E Config)
 --         \<*\> verboseFlag      -- IdentityT Parser (E Config)
 --
