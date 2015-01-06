@@ -228,16 +228,14 @@ verboseFlag = IdentityT . flag id (verbosity .~ Verbose)
 ````
 
 
-Building Options
-----------------
+## Building Options
 
 * `-fpedantic` (disabled by default)
 
   Pass additional warning flags to GHC.
 
 
-Contributions
--------------
+## Contributions
 
 Contributions, pull requests and bug reports are welcome! Please don't be
 afraid to contact author using GitHub or by e-mail.
