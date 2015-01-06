@@ -13,14 +13,21 @@
 module Example7
   where
 
+import Prelude (Bounded(maxBound, minBound), Enum(fromEnum))
+
 import Control.Applicative (Applicative((<*>)), (<$>))
 import Control.Monad (Monad((>>=)))
+import Data.Char (toLower)
+import qualified Data.Data as Data (Data(toConstr), showConstr)
 import Data.Either (Either(Left, Right))
 import Data.Function ((.), ($), id)
-import qualified Data.List as List (null, unwords)
-import Data.Maybe (Maybe)
+import Data.List ((++))
+import Data.List (concat, intersperse, lookup, map, null, unwords)
+import Data.Maybe (Maybe(Just, Nothing))
 import Data.Monoid (Endo, (<>))
+import Data.Tuple (fst)
 import System.IO (IO, print)
+import Text.Show (Show(show))
 
 import Control.Monad.Trans.Identity (IdentityT(IdentityT, runIdentityT))
 
@@ -52,11 +59,11 @@ options = runIdentityT $ runEndo defaultConfig <$> options'
   where
     options' :: IdentityT Parser (Endo Config)
     options' = foldEndo
-        <*> outputOption     -- IdentityT Parser (Maybe (E Config))
-        <*> verbosityOption  -- IdentityT Parser (Maybe (E Config))
-        <*> annoyingFlag     -- IdentityT Parser (E Config)
-        <*> silentFlag       -- IdentityT Parser (E Config)
-        <*> verboseFlag      -- IdentityT Parser (E Config)
+        <*> outputOption     -- :: IdentityT Parser (Maybe (E Config))
+        <*> verbosityOption  -- :: IdentityT Parser (Maybe (E Config))
+        <*> annoyingFlag     -- :: IdentityT Parser (E Config)
+        <*> silentFlag       -- :: IdentityT Parser (E Config)
+        <*> verboseFlag      -- :: IdentityT Parser (E Config)
 
     defaultConfig :: Config
     defaultConfig = Config Normal ""
@@ -73,7 +80,7 @@ outputOption =
         <> help "Store output in to a FILE."
   where
     parseFilePath = eitherReader $ \s ->
-        if List.null s
+        if null s
             then Left "Option argument can not be empty file path."
             else Right s
 
@@ -82,21 +89,22 @@ verbosityOption =
     IdentityT . optional . option (set verbosity <$> parseVerbosity)
     $ long "verbosity" <> metavar "LEVEL" <> help "Set verbosity to LEVEL."
   where
-    parseVerbosity = eitherReader $ \s -> case s of
-        "0"        -> Right Silent
-        "silent"   -> Right Silent
-        "1"        -> Right Normal
-        "normal"   -> Right Normal
-        "default"  -> Right Normal
-        "2"        -> Right Verbose
-        "verbose"  -> Right Verbose
-        "3"        -> Right Annoying
-        "annoying" -> Right Annoying
-        _          -> Left $ List.unwords
-            [ "Verbosity can be only number from 0 to 3 or one of the"
-            , "following:"
-            , "silent", "normal", "default", "verbose", "annoying"
-            ]
+    verbosityToStr = map toLower . Data.showConstr . Data.toConstr
+    verbosityIntValues = [(show $ fromEnum v, v) | v <- [Silent .. Annoying]]
+    verbosityStrValues =
+        ("default", Normal) : [(verbosityToStr v, v) | v <- [Silent .. Annoying]]
+
+    parseVerbosityError = unwords
+        [ "Verbosity can be only number from interval"
+        , show $ map fromEnum [minBound, maxBound :: Verbosity]
+        , "or one of the following:"
+        , concat . intersperse ", " $ map fst verbosityStrValues
+        ]
+
+    parseVerbosity = eitherReader $ \s ->
+        case lookup s $ verbosityIntValues ++ verbosityStrValues of
+            Just v  -> Right v
+            Nothing -> Left parseVerbosityError
 
 annoyingFlag :: IdentityT Parser (E Config)
 annoyingFlag = IdentityT . flag id (verbosity .~ Annoying)

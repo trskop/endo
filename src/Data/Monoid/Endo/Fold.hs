@@ -682,7 +682,7 @@ infixl 1 &$
 
 -- | Variant of function
 -- @('Data.Functor.<$>') :: 'Data.Functor.Functor' f => (a -> b) -> a -> b@
--- from "Data.Function" module, but with fixity as '&$' function.
+-- from "Data.Functor" module, but with fixity as '&$' function.
 (<&$>) :: Functor f => (a -> b) -> f a -> f b
 (<&$>) = fmap
 infixl 1 <&$>
@@ -695,7 +695,7 @@ infixl 1 <&$>
 --
 -- @
 -- data Verbosity = Silent | Normal | Verbose | Annoying
---   deriving (Show)
+--   deriving (Bounded, Data, Enum, Eq, Ord, Show, Typeable)
 --
 -- data Config = Config
 --     { _verbosity :: Verbosity
@@ -841,11 +841,11 @@ infixl 1 <&$>
 --   where
 --     options' :: 'IdentityT' Parser ('Endo' Config)
 --     options' = 'foldEndo'
---         \<*\> outputOption     -- IdentityT Parser (Maybe (E Config))
---         \<*\> verbosityOption  -- IdentityT Parser (Maybe (E Config))
---         \<*\> annoyingFlag     -- IdentityT Parser (E Config)
---         \<*\> silentFlag       -- IdentityT Parser (E Config)
---         \<*\> verboseFlag      -- IdentityT Parser (E Config)
+--         \<*\> outputOption     -- :: IdentityT Parser (Maybe (E Config))
+--         \<*\> verbosityOption  -- :: IdentityT Parser (Maybe (E Config))
+--         \<*\> annoyingFlag     -- :: IdentityT Parser (E Config)
+--         \<*\> silentFlag       -- :: IdentityT Parser (E Config)
+--         \<*\> verboseFlag      -- :: IdentityT Parser (E Config)
 --
 --     defaultConfig :: Config
 --     defaultConfig = Config Normal \"\"
@@ -873,7 +873,7 @@ infixl 1 <&$>
 --         \<\> help \"Store output in to a FILE.\"
 --   where
 --     parseFilePath = eitherReader $ \\s ->
---         if List.null s
+--         if null s
 --             then Left \"Option argument can not be empty file path.\"
 --             else Right s
 --
@@ -882,21 +882,22 @@ infixl 1 <&$>
 --     'IdentityT' . optional . option (set verbosity \<$\> parseVerbosity)
 --     $ long \"verbosity\" \<\> metavar \"LEVEL\" \<\> help \"Set verbosity to LEVEL.\"
 --   where
---     parseVerbosity = eitherReader $ \\s -> case s of
---         \"0\"        -> Right Silent
---         \"silent\"   -> Right Silent
---         \"1\"        -> Right Normal
---         \"normal\"   -> Right Normal
---         \"default\"  -> Right Normal
---         \"2\"        -> Right Verbose
---         \"verbose\"  -> Right Verbose
---         \"3\"        -> Right Annoying
---         \"annoying\" -> Right Annoying
---         _          -> Left $ List.unwords
---             [ \"Verbosity can be only number from 0 to 3 or one of the\"
---             , \"following:\"
---             , \"silent", \"normal\", \"default\", \"verbose\", \"annoying\"
---             ]
+--     verbosityToStr = map toLower . Data.showConstr . Data.toConstr
+--     verbosityIntValues = [(show $ fromEnum v, v) | v <- [Silent .. Annoying]]
+--     verbosityStrValues =
+--         ("default", Normal) : [(verbosityToStr v, v) | v <- [Silent .. Annoying]]
+--
+--     parseVerbosityError = unwords
+--         [ "Verbosity can be only number from interval"
+--         , show $ map fromEnum [minBound, maxBound :: Verbosity]
+--         , "or one of the following:"
+--         , concat . intersperse ", " $ map fst verbosityStrValues
+--         ]
+--
+--     parseVerbosity = eitherReader $ \s ->
+--         case lookup s $ verbosityIntValues ++ verbosityStrValues of
+--             Just v  -> Right v
+--             Nothing -> Left parseVerbosityError
 --
 -- annoyingFlag :: 'IdentityT' Parser ('Data.Monoid.Endo.E' Config)
 -- annoyingFlag = 'IdentityT' . flag id (verbosity .~ Annoying)

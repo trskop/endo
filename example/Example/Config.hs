@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 -- |
 -- Module:       $HEADER$
@@ -14,12 +15,18 @@
 module Example.Config (Config(..), Verbosity(..))
   where
 
+import Prelude (Bounded, Enum)
+
+import Data.Data (Data)
+import Data.Eq (Eq)
+import Data.Ord (Ord)
 import Text.Show (Show)
+import Data.Typeable (Typeable)
 import System.IO (FilePath)
 
 
 data Verbosity = Silent | Normal | Verbose | Annoying
-  deriving (Show)
+  deriving (Bounded, Data, Enum, Eq, Ord, Show, Typeable)
 
 data Config = Config
     { _verbosity :: Verbosity
