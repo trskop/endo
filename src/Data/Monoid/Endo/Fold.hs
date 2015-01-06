@@ -834,10 +834,10 @@ infixl 1 <&$>
 --
 -- @
 -- options :: Parser Config
--- options = 'Control.Monad.Trans.Identity.runIdentityT' $ runEndo defaultConfig \<$\> options'
+-- options = 'Control.Monad.Trans.Identity.runIdentityT' $ 'Control.Monad.Endo.runEndo' defaultConfig \<$\> options'
 --   where
---     options' :: 'IdentityT' Parser (Endo Config)
---     options' = foldEndo
+--     options' :: 'IdentityT' Parser ('Endo' Config)
+--     options' = 'foldEndo'
 --         \<*\> outputOption     -- IdentityT Parser (Maybe (E Config))
 --         \<*\> verbosityOption  -- IdentityT Parser (Maybe (E Config))
 --         \<*\> annoyingFlag     -- IdentityT Parser (E Config)
