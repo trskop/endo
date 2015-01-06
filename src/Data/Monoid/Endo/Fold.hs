@@ -209,6 +209,14 @@ instance
 
 -- {{{ Monad Transformers -----------------------------------------------------
 
+-- | This instance can be used to in cases when there is no 'FoldEndoArgs'
+-- instance for a specific 'Applicative' functor. Example:
+--
+-- @
+-- 'Control.Monad.Trans.Identity.runIdentityT' $ 'foldEndo'
+--     \<*\> 'IdentityT' parseSomething
+--     \<*\> 'IdentityT' parseSomethingElse
+-- @
 instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (IdentityT f r) where
     type ResultOperatesOn (IdentityT f r) = ResultOperatesOn r
     foldEndoArgs     = pure . foldEndoArgs
