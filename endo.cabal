@@ -2,7 +2,41 @@ name:                   endo
 version:                0.1.0.0
 synopsis:               Endomorphism utilities.
 description:
-  TODO
+  Package defines extra functions for 'Data.Monoid.Endo' data type, and also
+  generic endomorphism folding machinery. Generic endomorphism folding can be
+  used for various purposes, including as a builder.
+  .
+  Here is an example how to use with
+  <http://hackage.haskell.org/package/optparse-applicative optparse-applicative>:
+  .
+  > data Verbosity = Silent | Normal | Verbose | Annoying
+  >   deriving (Show)
+  >
+  > data Config = Config Verbosity FilePath
+  >   deriving (Show)
+  >
+  > options :: Parser Config
+  > options = runIdentityT $ runEndo defaultConfig <$> options'
+  >   where
+  >     options' :: IdentityT Parser (Endo Config)
+  >     options' = foldEndo
+  >         <*> outputOption     -- IdentityT Parser (Maybe (E Config))
+  >         <*> verbosityOption  -- IdentityT Parser (Maybe (E Config))
+  >         <*> annoyingFlag     -- IdentityT Parser (E Config)
+  >         <*> silentFlag       -- IdentityT Parser (E Config)
+  >         <*> verboseFlag      -- IdentityT Parser (E Config)
+  >
+  >     defaultConfig :: Config
+  >     defaultConfig = Config Normal ""
+  >
+  > main :: IO ()
+  > main = execParser (info options fullDesc) >>= print
+  .
+  >>> :main -o an.out.put --annoying
+  Config Annoying "an.out.put"
+  .
+  For details how individual option parsers look like see module
+  "Data.Monoid.Endo.Fold" which contains other examples as well as this one.
 
 homepage:               https://github.com/trskop/endo
 license:                BSD3
