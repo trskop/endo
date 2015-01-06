@@ -227,6 +227,22 @@ verboseFlag = IdentityT . flag id (verbosity .~ Verbose)
 ````
 
 
+Building Options
+----------------
+
+* `-fpedantic` (disabled by default)
+
+  Pass additional warning flags to GHC.
+
+
+Contributions
+-------------
+
+Contributions, pull requests and bug reports are welcome! Please don't be
+afraid to contact author using GitHub or by e-mail.
+
+
+
 [Hackage: lens]:
   http://hackage.haskell.org/package/lens
   "lens package on Hackage"
