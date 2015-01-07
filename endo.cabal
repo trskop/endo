@@ -6,7 +6,7 @@ description:
   generic endomorphism folding machinery. Generic endomorphism folding can be
   used for various purposes, including as a builder.
   .
-  Here is an example how to use with
+  Here is an example how to use it with
   <http://hackage.haskell.org/package/optparse-applicative optparse-applicative>
   package:
   .
