@@ -174,7 +174,7 @@ main :: IO ()
 main = execParser (info options fullDesc) >>= print
 ````
 
-Parsers for individual options and flags are wrapped in 'IdentityT', because
+Parsers for individual options and flags are wrapped in `IdentityT`, because
 there is no `instance FoldEndoArgs r => FoldEndoArgs (Parser r)`, but there is
 `instance FoldEndoArgs r => FoldEndoArgs (IdentityT r)`.
 
