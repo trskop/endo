@@ -867,10 +867,19 @@ infixl 1 <&$>
 -- Config {_verbosity = Annoying, _outputFile = "an.out.put"}
 --
 -- Parsers for individual options and flags are wrapped in 'IdentityT', because
--- there is no @instance 'FoldEndoArgs' r =\> 'FoldEndoArgs' (Parser r)@, but
--- there is @instance 'FoldEndoArgs' r =\> 'FoldEndoArgs' ('IdentityT' r)@.
+-- there is no following instance:
 --
--- Functions used by the above code:
+-- @
+-- instance 'FoldEndoArgs' r => 'FoldEndoArgs' (Parser r)
+-- @
+--
+-- But there is:
+--
+-- @
+-- instance ('Applicative' f, 'FoldEndoArgs' r) => 'FoldEndoArgs' ('IdentityT' f r)
+-- @
+--
+-- Functions used by the above code example:
 --
 -- @
 -- outputOption :: 'IdentityT' Parser (Maybe ('Data.Monoid.Endo.E' Config))
