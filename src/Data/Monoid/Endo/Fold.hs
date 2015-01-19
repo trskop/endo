@@ -226,7 +226,7 @@ instance
     , FoldEndoArgs r
     ) => FoldEndoArgs (ExceptT e m r)
   where
-    type ResultOperatesOn (ExceptT e f r) = ResultOperatesOn r
+    type ResultOperatesOn (ExceptT e m r) = ResultOperatesOn r
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 #endif
