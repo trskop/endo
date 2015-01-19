@@ -1,6 +1,15 @@
 # ChangeLog / ReleaseNotes
 
 
+## Version 0.1.0.2
+
+* Bugfix release.
+* Bugfix: Unable to compile with transformers >= 0.4 (again).
+* Minor documentation updates.
+* Uploaded to [Hackage][]
+  <http://hackage.haskell.org/package/endo-0.1.0.2>
+
+
 ## Version 0.1.0.1
 
 * Bugfix release.
