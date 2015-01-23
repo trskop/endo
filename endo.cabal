@@ -21,11 +21,11 @@ description:
   >   where
   >     options' :: IdentityT Parser (Endo Config)
   >     options' = foldEndo
-  >         <*> outputOption     -- IdentityT Parser (Maybe (E Config))
-  >         <*> verbosityOption  -- IdentityT Parser (Maybe (E Config))
-  >         <*> annoyingFlag     -- IdentityT Parser (E Config)
-  >         <*> silentFlag       -- IdentityT Parser (E Config)
-  >         <*> verboseFlag      -- IdentityT Parser (E Config)
+  >         <*> outputOption     -- :: IdentityT Parser (Maybe (E Config))
+  >         <*> verbosityOption  -- :: IdentityT Parser (Maybe (E Config))
+  >         <*> annoyingFlag     -- :: IdentityT Parser (E Config)
+  >         <*> silentFlag       -- :: IdentityT Parser (E Config)
+  >         <*> verboseFlag      -- :: IdentityT Parser (E Config)
   >
   >     defaultConfig :: Config
   >     defaultConfig = Config Normal ""
