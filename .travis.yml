@@ -1,9 +1,9 @@
 language: haskell
 
 ghc:
+  # Older than GHC 7.6 aren't supported by the package.
   - 7.8
   - 7.6
-  - 7.4
 
 script:
   # Option -fpedantic turns on additional wornings in addition to -Wall.
