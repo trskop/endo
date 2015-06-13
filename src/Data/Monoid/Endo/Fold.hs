@@ -282,7 +282,7 @@ instance
 
 instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (ReaderT r' f r) where
     type ResultOperatesOn (ReaderT r' f r) = ResultOperatesOn r
-    type Result (ReaderT r' m r) = ReaderT r' m (Result r)
+    type Result (ReaderT r' f r) = ReaderT r' f (Result r)
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 
