@@ -151,6 +151,9 @@ class FoldEndoArgs a where
     -- | Extracts type of a value that is modified by the result.
     type ResultOperatesOn a
 
+    -- | Result type of the whole endomorphism folding.
+    type Result a
+
     foldEndoArgs     ::       Endo (ResultOperatesOn a)  -> a
     dualFoldEndoArgs :: Dual (Endo (ResultOperatesOn a)) -> a
 #ifdef HAVE_MINIMAL_PRAGMA
@@ -164,36 +167,43 @@ instance
     ) => FoldEndoArgs (a -> r)
   where
     type ResultOperatesOn (a -> r) = ResultOperatesOn r
+    type Result (a -> r) = Result r
     foldEndoArgs     e e' = foldEndoArgs     (e <> anEndo    e')
     dualFoldEndoArgs e e' = dualFoldEndoArgs (e <> aDualEndo e')
 
 instance FoldEndoArgs (Endo a) where
     type ResultOperatesOn (Endo a) = a
+    type Result (Endo a) = Endo a
     foldEndoArgs              = id
     dualFoldEndoArgs (Dual e) = e
 
 instance (Monoid c, FoldEndoArgs r) => FoldEndoArgs (Const c r) where
     type ResultOperatesOn (Const c r) = ResultOperatesOn r
+    type Result (Const c r) = Const c (Result r)
     foldEndoArgs     _ = Const mempty
     dualFoldEndoArgs _ = Const mempty
 
 instance FoldEndoArgs r => FoldEndoArgs (Either e r) where
     type ResultOperatesOn (Either e r) = ResultOperatesOn r
+    type Result (Either e r) = Either e (Result r)
     foldEndoArgs     = Right . foldEndoArgs
     dualFoldEndoArgs = Right . dualFoldEndoArgs
 
 instance FoldEndoArgs r => FoldEndoArgs (Identity r) where
     type ResultOperatesOn (Identity r) = ResultOperatesOn r
+    type Result (Identity r) = Identity (Result r)
     foldEndoArgs     = Identity . foldEndoArgs
     dualFoldEndoArgs = Identity . dualFoldEndoArgs
 
 instance FoldEndoArgs r => FoldEndoArgs (IO r) where
     type ResultOperatesOn (IO r) = ResultOperatesOn r
+    type Result (IO r) = IO (Result r)
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 
 instance FoldEndoArgs r => FoldEndoArgs (Maybe r) where
     type ResultOperatesOn (Maybe r) = ResultOperatesOn r
+    type Result (Maybe r) = Maybe (Result r)
     foldEndoArgs     = Just . foldEndoArgs
     dualFoldEndoArgs = Just . dualFoldEndoArgs
 
@@ -206,6 +216,7 @@ instance
     => FoldEndoArgs (Compose f g r)
   where
     type ResultOperatesOn (Compose f g r) = ResultOperatesOn r
+    type Result (Compose f g r) = Compose f g (Result r)
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 
@@ -214,6 +225,7 @@ instance
     => FoldEndoArgs (Product f g r)
   where
     type ResultOperatesOn (Product f g r) = ResultOperatesOn r
+    type Result (Product f g r) = Product f g (Result r)
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 
@@ -231,6 +243,7 @@ instance
 -- @
 instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (IdentityT f r) where
     type ResultOperatesOn (IdentityT f r) = ResultOperatesOn r
+    type Result (IdentityT f r) = IdentityT f (Result r)
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 
@@ -244,12 +257,14 @@ instance
     ) => FoldEndoArgs (ExceptT e m r)
   where
     type ResultOperatesOn (ExceptT e m r) = ResultOperatesOn r
+    type Result (ExceptT e m r) = ExceptT e m (Result r)
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 #endif
 
 instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (ListT f r) where
     type ResultOperatesOn (ListT f r) = ResultOperatesOn r
+    type Result (ListT f r) = ListT f (Result r)
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 
@@ -261,11 +276,13 @@ instance
     , FoldEndoArgs r
     ) => FoldEndoArgs (MaybeT m r) where
     type ResultOperatesOn (MaybeT m r) = ResultOperatesOn r
+    type Result (MaybeT m r) = MaybeT m (Result r)
     foldEndoArgs     = return . foldEndoArgs
     dualFoldEndoArgs = return . dualFoldEndoArgs
 
 instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (ReaderT r' f r) where
     type ResultOperatesOn (ReaderT r' f r) = ResultOperatesOn r
+    type Result (ReaderT r' m r) = ReaderT r' m (Result r)
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 
@@ -279,6 +296,7 @@ instance
     ) => FoldEndoArgs (RWST r' w s m r)
   where
     type ResultOperatesOn (RWST r' w s m r) = ResultOperatesOn r
+    type Result (RWST r' w s m r) = RWST r' w s m (Result r)
     foldEndoArgs     = return . foldEndoArgs
     dualFoldEndoArgs = return . dualFoldEndoArgs
 
@@ -292,16 +310,19 @@ instance
     ) => FoldEndoArgs (Strict.RWST r' w s m r)
   where
     type ResultOperatesOn (Strict.RWST r' w s m r) = ResultOperatesOn r
+    type Result (Strict.RWST r' w s m r) = Strict.RWST r' w s m (Result r)
     foldEndoArgs     = return . foldEndoArgs
     dualFoldEndoArgs = return . dualFoldEndoArgs
 
 instance (Monad m, FoldEndoArgs r) => FoldEndoArgs (StateT s m r) where
     type ResultOperatesOn (StateT s m r) = ResultOperatesOn r
+    type Result (StateT s m r) = StateT s m (Result r)
     foldEndoArgs     = return . foldEndoArgs
     dualFoldEndoArgs = return . dualFoldEndoArgs
 
 instance (Monad m, FoldEndoArgs r) => FoldEndoArgs (Strict.StateT s m r) where
     type ResultOperatesOn (Strict.StateT s m r) = ResultOperatesOn r
+    type Result (Strict.StateT s m r) = Strict.StateT s m (Result r)
     foldEndoArgs     = return . foldEndoArgs
     dualFoldEndoArgs = return . dualFoldEndoArgs
 
@@ -309,6 +330,7 @@ instance
     (Applicative f, FoldEndoArgs r, Monoid w) => FoldEndoArgs (WriterT w f r)
   where
     type ResultOperatesOn (WriterT w f r) = ResultOperatesOn r
+    type Result (WriterT w f r) = WriterT w f (Result r)
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 
@@ -317,6 +339,7 @@ instance
     => FoldEndoArgs (Strict.WriterT w f r)
   where
     type ResultOperatesOn (Strict.WriterT w f r) = ResultOperatesOn r
+    type Result (Strict.WriterT w f r) = Strict.WriterT w f (Result r)
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 
