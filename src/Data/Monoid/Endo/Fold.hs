@@ -54,6 +54,8 @@ module Data.Monoid.Endo.Fold
     -- * Utility Functions
     , (&$)
     , (<&$>)
+    , embedEndoWith
+    , embedDualEndoWith
     )
   where
 
@@ -717,6 +719,38 @@ infixl 1 &$
 (<&$>) :: Functor f => (a -> b) -> f a -> f b
 (<&$>) = fmap
 infixl 1 <&$>
+
+-- | Use 'Endo' (possibly result of 'foldEndo') and use it to create value of
+-- different type.
+--
+-- Examples:
+--
+-- @
+-- 'embedEndoWith' 'Control.Monad.Trans.Writer.Lazy.tell'
+--     :: (Monad m, 'AnEndo' e, w ~ 'EndoOperatesOn' e)
+--     => e
+--     -> 'Control.Monad.Trans.Writer.Lazy.WriterT' ('Endo' w) m ()
+--
+-- 'embedEndoWith' 'Control.Monad.Trans.State.Lazy.modify'
+--     :: (Monad m, 'AnEndo' e, s ~ 'EndoOperatesOn' e)
+--     => e
+--     -> 'Control.Monad.Trans.State.Lazy.StateT' s m ()
+-- @
+--
+-- See also 'embedDualEndoWith'.
+embedEndoWith :: (AnEndo e, EndoOperatesOn e ~ a)
+    => (Endo a -> b)
+    -- ^ Embedding function.
+    -> e -> b
+embedEndoWith = (. anEndo)
+
+-- | Dual to 'embedEndoWith', which uses 'aDualEndo' instead of 'anEndo'.
+embedDualEndoWith
+    :: (AnEndo e, EndoOperatesOn e ~ a)
+    => (Dual (Endo a) -> b)
+    -- ^ Embedding function.
+    -> e -> b
+embedDualEndoWith = (. aDualEndo)
 
 -- }}} Utility Functions ------------------------------------------------------
 
