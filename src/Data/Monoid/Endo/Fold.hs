@@ -51,7 +51,7 @@ module Data.Monoid.Endo.Fold
     )
   where
 
-import Control.Applicative (Applicative(pure))
+import Control.Applicative (Applicative(pure), Const(Const))
 import Control.Monad (Monad(return))
 import Data.Either (Either(Right))
 import Data.Foldable (Foldable(foldMap))
@@ -159,6 +159,11 @@ instance FoldEndoArgs (Endo a) where
     type ResultOperatesOn (Endo a) = a
     foldEndoArgs              = id
     dualFoldEndoArgs (Dual e) = e
+
+instance (Monoid c, FoldEndoArgs r) => FoldEndoArgs (Const c r) where
+    type ResultOperatesOn (Const c r) = ResultOperatesOn r
+    foldEndoArgs     _ = Const mempty
+    dualFoldEndoArgs _ = Const mempty
 
 instance FoldEndoArgs r => FoldEndoArgs (Either e r) where
     type ResultOperatesOn (Either e r) = ResultOperatesOn r
