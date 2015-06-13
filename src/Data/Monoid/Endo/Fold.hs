@@ -14,6 +14,12 @@
 #define HAVE_EXCEPTT
 #endif
 
+#if MIN_VERSION_base(4,7,0)
+-- Module Data.Proxy, that defines Proxy data type, was introduced in
+-- base == 4.7.0.0.
+#define HAVE_PROXY
+#endif
+
 -- |
 -- Module:       $HEADER$
 -- Description:  Generic folding for various endomorphism representations.
@@ -68,6 +74,10 @@ import Text.Show (Show)
 #ifdef KIND_POLYMORPHIC_TYPEABLE
 import Data.Data (Data)
 import Data.Typeable (Typeable)
+#endif
+
+#ifdef HAVE_PROXY
+import Data.Proxy (Proxy(Proxy))
 #endif
 
 #ifdef HAVE_EXCEPTT
@@ -351,6 +361,15 @@ instance AnEndo a => AnEndo (Maybe a) where
 
     anEndo Nothing  = mempty
     anEndo (Just e) = anEndo e
+
+#ifdef HAVE_PROXY
+-- | Constructs identity endomorphism for specified phantom type.
+instance AnEndo (Proxy a) where
+    type EndoOperatesOn (Proxy a) = a
+
+    anEndo    Proxy = mempty
+    aDualEndo Proxy = mempty
+#endif
 
 -- {{{ Foldable Instances -----------------------------------------------------
 
