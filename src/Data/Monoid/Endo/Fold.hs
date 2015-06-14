@@ -67,7 +67,7 @@ import Data.Function ((.), id)
 import Data.Functor (Functor(fmap))
 import Data.Functor.Identity (Identity(Identity))
 import Data.Maybe (Maybe(Just, Nothing))
-import Data.Monoid (Dual(Dual), Endo(Endo), Monoid(mempty, mconcat), (<>))
+import Data.Monoid (Dual(Dual, getDual), Endo(Endo), Monoid(mempty, mconcat), (<>))
 import GHC.Generics (Generic)
 import System.IO (IO)
 import Text.Read (Read)
@@ -358,8 +358,13 @@ class AnEndo a where
     -- @'Endo' a@ it would be @a@.
     type EndoOperatesOn a
 
-    -- | Convert value encoding @a -> a@ in to 'Endo'.
+    -- | Convert value encoding @a -> a@ in to 'Endo'. Default implementation:
+    --
+    -- @
+    -- 'anEndo' = 'getDual' . 'aDualEndo'
+    -- @
     anEndo :: a -> Endo (EndoOperatesOn a)
+    anEndo = getDual . aDualEndo
 
     -- | Dual to 'anEndo'. Default implementation:
     --
@@ -370,7 +375,7 @@ class AnEndo a where
     aDualEndo = Dual . anEndo
 
 #if HAVE_MINIMAL_PRAGMA
-    {-# MINIMAL anEndo #-}
+    {-# MINIMAL anEndo | aDualEndo #-}
 #endif
 
 instance AnEndo (Endo a) where

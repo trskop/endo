@@ -3,6 +3,10 @@
 
 ## Version 0.2.0.0
 
+* Default implementation for `anEndo` method of 'AnEndo' type class, which is
+  now defined as: `anEndo = getDual . aDualEndo`. As a consequence it is now
+  possible to define complete instances of `AnEndo` by providing either
+  `anEndo` or `aDualEndo`. (new, change)
 * Introducing associated type `Result` to `FoldEndoArgs` type class. This
   allows result of the whole folding to be explicitly stated in a type
   signature. (new, change)
