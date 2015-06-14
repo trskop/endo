@@ -15,6 +15,7 @@ module Example2
 
 import Data.Function (($), id)
 import Data.Monoid (Endo(appEndo))
+import System.IO (FilePath)
 
 import Data.Monoid.Endo (E)
 import Data.Monoid.Endo.Fold ((&$), foldEndo)
