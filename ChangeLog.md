@@ -25,7 +25,8 @@
   r)`, which is useful in cases when one needs to discard the computation and
   return a constant instead. (new)
 * Bumping upper bounds on base and between, therefore it now builds on GHC 7.10
-  with base 4.8. (change)
+  with base 4.8. (new)
+* Uploaded to [Hackage][]: <http://hackage.haskell.org/package/endo-0.2.0.0>
 
 
 ## Version 0.1.0.2
@@ -33,24 +34,21 @@
 * Bugfix release.
 * Bugfix: Unable to compile with transformers >= 0.4 (again).
 * Minor documentation updates.
-* Uploaded to [Hackage][]
-  <http://hackage.haskell.org/package/endo-0.1.0.2>
+* Uploaded to [Hackage][]: <http://hackage.haskell.org/package/endo-0.1.0.2>
 
 
 ## Version 0.1.0.1
 
 * Bugfix release.
 * Bugfix: Unable to compile with transformers >= 0.4.
-* Uploaded to [Hackage][]:
-  <http://hackage.haskell.org/package/endo-0.1.0.1>
+* Uploaded to [Hackage][]: <http://hackage.haskell.org/package/endo-0.1.0.1>
 
 
 ## Version 0.1.0.0
 
 * **This version doesn't work with transformers >= 0.4.**
 * First public release.
-* Uploaded to [Hackage][]:
-  <http://hackage.haskell.org/package/endo-0.1.0.0>
+* Uploaded to [Hackage][]: <http://hackage.haskell.org/package/endo-0.1.0.0>
 
 
 
