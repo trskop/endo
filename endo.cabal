@@ -113,4 +113,4 @@ source-repository head
 source-repository this
   type:                 git
   location:             git://github.com/trskop/endo.git
-  tag:                  0.1.0.2
+  tag:                  0.2.0.0
