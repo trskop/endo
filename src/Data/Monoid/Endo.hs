@@ -20,7 +20,7 @@ module Data.Monoid.Endo
     , mapEndo2
     , liftEndo
 
-    -- ** Lens
+    -- * Lens
     , endo
     )
     where
@@ -57,7 +57,9 @@ runEndo x (Endo f) = f x
 
 -- | Lens for 'Endo'. In terms of /lens/ package it would have type:
 --
--- > endo :: Lens (Endo a) (Endo b) (E a) (E b)
+-- @
+-- 'endo' :: Lens ('Endo' a) ('Endo' b) ('E' a) ('E' b)
+-- @
 --
 -- For details see <http://hackage.haskell.org/package/lens lens package>.
 endo :: Functor f => (E a -> f (E b)) -> Endo a -> f (Endo b)
