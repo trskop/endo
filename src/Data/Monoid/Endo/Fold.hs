@@ -35,9 +35,23 @@
 module Data.Monoid.Endo.Fold
     (
     -- * Usage Examples
-    -- $usageExample
+    --
+    -- | Examples in this section were taken from real live production code,
+    -- but they were tamed down a little.
 
-    -- ** Using with optparse-applicative
+    -- ** Basic Idea
+    -- $basicIdea
+
+    -- ** Working With Corner Cases
+    -- $workingWithCornerCases
+
+    -- ** Using With Lenses
+    -- $lenses
+
+    -- ** Other Usage
+    -- $otherUsage
+
+    -- ** Using With optparse-applicative
     -- $optparseApplicativeExample
 
     -- * Generic Endomorphism Folding
@@ -216,7 +230,7 @@ instance FoldEndoArgs r => FoldEndoArgs (Identity r) where
 -- Examples:
 --
 -- @
--- 'foldEndo' <*> ((++) <$> getLine) <*> ((++) <$> getLine)
+-- 'foldEndo' \<*\> ((++) \<$\> getLine) \<*\> ((++) \<$\> getLine)
 --     :: :: ('FoldEndoArgs' r, 'ResultOperatesOn' r ~ String) => IO r
 -- @
 --
@@ -853,7 +867,7 @@ embedDualEndoWith = (. aDualEndo)
 
 -- }}} Utility Functions ------------------------------------------------------
 
--- $usageExample
+-- $basicIdea
 --
 -- Lets define simple application @Config@ data type as:
 --
@@ -898,10 +912,15 @@ embedDualEndoWith = (. aDualEndo)
 --
 -- Above example shows us that it is possible to modify @Config@ as if it was a
 -- monoid, but without actually having to state it as such. In practice it is
--- not always possible to define it as 'Monoid' or at least a @Semigroup@. What
--- usually works are endomorphisms, like in this example.
+-- not always possible to define it as 'Monoid', or at least as a @Semigroup@.
+-- Endomorphism are monoids under composition, therefore they are what usually
+-- works in situations when the modified data type can not be instantiated as a
+-- monoid.
+
+-- $workingWithCornerCases
 --
--- Now, 'System.IO.FilePath' has one pathological case, and that is \"\". There
+-- In real applications corner cases arise quite easily, e.g.
+-- 'System.IO.FilePath' has one pathological case, and that is \"\". There
 -- is a lot of ways to handle it. Here we will concentrate only few basic
 -- techniques to illustrate versatility of our approach.
 --
@@ -931,6 +950,16 @@ embedDualEndoWith = (. aDualEndo)
 --     '&$' setOutputFile3 \"an.out.put\"
 -- @
 --
+-- Great thing about 'Maybe' is the fact that it has
+-- 'Control.Applicative.Alternative' and 'Control.Monad.MonadPlus' instances.
+-- Using 'Control.Monad.guard' may simplify @setOutputFile3@ in to definition
+-- like following:
+--
+-- @
+-- setOutputFile3':: FilePath -> Maybe ('Data.Monoid.Endo.E' Config)
+-- setOutputFile3' fp = setOutputFile fp 'Data.Functor.<$' 'Control.Monad.guard' (not (null fp))
+-- @
+--
 -- Following example uses common pattern of using 'Either' as error reporting
 -- monad. This approach can be easily modified for arbitrary error reporting
 -- monad.
@@ -946,22 +975,24 @@ embedDualEndoWith = (. aDualEndo)
 --     'Control.Applicative.<*>' setOutputFile4 \"an.out.put\"
 -- @
 --
--- Notice, that above example uses applicative style. Normally when using this
--- style, for setting record values, one needs to keep in sync order of
--- constructor arguments and order of operations. Using 'foldEndo' (and its
+-- Notice, that above example uses applicative style. Normally, when using this
+-- style for setting record values, one needs to keep in sync the order of
+-- constructor arguments, and order of operations. Using 'foldEndo' (and its
 -- dual 'dualFoldEndo') doesn't have this restriction.
+
+-- $lenses
 --
--- Instead of setter functions one may want to use lenses (in terms of
--- <http://hackage.haskell.org/package/lens lens package>):
+-- Instead of setter functions one may want to use lenses. In this example we
+-- use types from <http://hackage.haskell.org/package/lens lens package>, but
+-- definitions use function from
+-- <http://hackage.haskell.org/package/between between package>:
 --
 -- @
 -- verbosity :: Lens' Config Verbosity
--- verbosity =
---     _verbosity 'Data.Function.Between.~@@^>' \\s b -> s{_verbosity = b}
+-- verbosity = _verbosity 'Data.Function.Between.~@@^>' \\s b -> s{_verbosity = b}
 --
 -- outputFile :: Lens' Config FilePath
--- outputFile =
---     _outputFile 'Data.Function.Between.~@@^>' \\s b -> s{_outputFile = b}
+-- outputFile = _outputFile 'Data.Function.Between.~@@^>' \\s b -> s{_outputFile = b}
 -- @
 --
 -- Now setting values of @Config@ would look like:
@@ -972,6 +1003,8 @@ embedDualEndoWith = (. aDualEndo)
 --     '&$' verbosity  .~ Annoying
 --     '&$' outputFile .~ \"an.out.put\"
 -- @
+
+-- $otherUsage
 --
 -- Probably one of the most interesting things that can be done with this
 -- module is following:

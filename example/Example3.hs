@@ -13,7 +13,11 @@
 module Example3
   where
 
+import Control.Monad (guard)
+import Data.Bool (not)
 import Data.Function (($))
+import Data.Functor ((<$))
+import Data.List (null)
 import Data.Maybe (Maybe(Just, Nothing))
 import Data.Monoid (Endo(appEndo))
 import System.IO (FilePath)
@@ -33,3 +37,6 @@ example3 :: E Config
 example3 = appEndo $ foldEndo
     &$ setVerbosity Annoying
     &$ setOutputFile3 "an.out.put"
+
+setOutputFile3':: FilePath -> Maybe (E Config)
+setOutputFile3' fp = setOutputFile fp <$ guard (not (null fp))
