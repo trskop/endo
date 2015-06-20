@@ -3,9 +3,10 @@
 
 ## Version 0.2.0.1
 
-* Small API documentation ehancements.
+* API documentation ehancements and clarifications.
 * Explicit implementation of `aDualEndo` for
   `instance AnEndo a => AnEndo (Maybe a)`.
+* Uploaded to [Hackage][]: <http://hackage.haskell.org/package/endo-0.2.0.1>
 
 
 ## Version 0.2.0.0
