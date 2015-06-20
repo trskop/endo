@@ -2,7 +2,7 @@
 -- |
 -- Module:       $HEADER$
 -- Description:  Example 1
--- Copyright:    (c) 2015 Peter Trško
+-- Copyright:    (c) 2015, Peter Trško
 -- License:      BSD3
 --
 -- Maintainer:   peter.trsko@gmail.com
