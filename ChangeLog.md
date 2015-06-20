@@ -1,6 +1,13 @@
 # ChangeLog / ReleaseNotes
 
 
+## Version 0.2.0.1
+
+* Small API documentation ehancements.
+* Explicit implementation of `aDualEndo` for
+  `instance AnEndo a => AnEndo (Maybe a)`.
+
+
 ## Version 0.2.0.0
 
 * Default implementation for `anEndo` method of 'AnEndo' type class, which is
