@@ -72,7 +72,7 @@ monoid.
 ### Working With Corner Cases
 
 In real applications corner cases arise quite easily, e.g.
-`System.IO.FilePath` has one pathological case, and that is \"\". There
+`System.IO.FilePath` has one pathological case, and that is `""`. There
 is a lot of ways to handle it. Here we will concentrate only few basic
 techniques to illustrate versatility of our approach.
 
