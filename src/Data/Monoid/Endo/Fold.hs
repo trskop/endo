@@ -744,9 +744,10 @@ instance
 
 -- {{{ Utility Functions ------------------------------------------------------
 
--- | Variant of function @('Data.Function.$') :: (a -> b) -> a -> b@ from
--- "Data.Function" module, but with fixity as @(&) :: a -> (a -> b) -> b@
--- function from <http://hackage.haskell.org/package/lens lens package>.
+-- | Variant of function @('Data.Function.$') :: (a -> b) -> a -> b@, from
+-- "Data.Function" module, but with fixity as
+-- @('Data.Function.&') :: a -> (a -> b) -> b@ function from "Data.Function"
+-- module (available in base since version 4.8.0.0).
 (&$) :: (a -> b) -> a -> b
 f &$ a = f a
 infixl 1 &$
