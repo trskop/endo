@@ -402,6 +402,9 @@ instance AnEndo a => AnEndo (Maybe a) where
     anEndo Nothing  = mempty
     anEndo (Just e) = anEndo e
 
+    aDualEndo Nothing  = mempty
+    aDualEndo (Just e) = aDualEndo e
+
 #ifdef HAVE_PROXY
 -- | Constructs identity endomorphism for specified phantom type.
 instance AnEndo (Proxy a) where
