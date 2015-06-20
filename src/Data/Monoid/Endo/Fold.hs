@@ -151,7 +151,17 @@ class FoldEndoArgs a where
     -- | Extracts type of a value that is modified by the result.
     type ResultOperatesOn a
 
-    -- | Result type of the whole endomorphism folding.
+    -- | Result type of the whole endomorphism folding. It can be used to
+    -- restrict the result of 'foldEndo' and 'dualFoldEndoArgs'. Example:
+    --
+    -- @
+    -- -- Type restricted version of 'foldEndo' that forces the result of the
+    -- -- whole folding machinery to be \"'Endo' Int\".
+    -- myFoldEndo
+    --     :: ('Result' args ~ 'Endo' Int, 'FoldEndoArgs' args)
+    --     => args -> args
+    -- myFoldEndo = 'foldEndo'
+    -- @
     type Result a
 
     foldEndoArgs     ::       Endo (ResultOperatesOn a)  -> a
