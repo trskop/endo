@@ -19,6 +19,7 @@ description:
   > options :: Parser Config
   > options = runIdentityT $ runEndo defaultConfig <$> options'
   >   where
+  >     -- All this IdentityT clutter is here to avoid orphan instances.
   >     options' :: IdentityT Parser (Endo Config)
   >     options' = foldEndo
   >         <*> outputOption     -- :: IdentityT Parser (Maybe (E Config))
@@ -45,7 +46,7 @@ license:                BSD3
 license-file:           LICENSE
 author:                 Peter Trško
 maintainer:             peter.trsko@gmail.com
-copyright:              (c) 2013-2015 Peter Trško
+copyright:              (c) 2013-2015, Peter Trško
 category:               Data
 build-type:             Simple
 cabal-version:          >=1.10
