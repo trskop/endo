@@ -71,10 +71,10 @@ monoid.
 
 ### Working With Corner Cases
 
-In real applications corner cases arise quite easily, e.g.
-`System.IO.FilePath` has one pathological case, and that is `""`. There
-is a lot of ways to handle it. Here we will concentrate only few basic
-techniques to illustrate versatility of our approach.
+In real applications corner cases arise quite easily, e.g. `FilePath` has one
+pathological case, and that is `""`. There is a lot of ways to handle it. Here
+we will concentrate only few basic techniques to illustrate versatility of our
+approach.
 
 ````Haskell
 -- | Trying to set output file to \"\" will result in keeping original value.
