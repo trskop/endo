@@ -1,6 +1,11 @@
 # ChangeLog / ReleaseNotes
 
 
+## Version NEXT
+
+* Synchronized API documentation of `Data.Monoid.Endo.Fold` with README.
+
+
 ## Version 0.2.0.1
 
 * API documentation ehancements and clarifications.
