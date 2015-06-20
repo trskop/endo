@@ -170,6 +170,9 @@ class FoldEndoArgs a where
     {-# MINIMAL foldEndoArgs, dualFoldEndoArgs #-}
 #endif
 
+-- | Recurse along 'FoldEndoArgs' instances if first argument is 'AnEndo'.
+-- This instance is actually what makes 'foldEndo' and 'dualFoldEndo'
+-- variadic-like.
 instance
     ( AnEndo a
     , FoldEndoArgs r
@@ -187,6 +190,10 @@ instance FoldEndoArgs (Endo a) where
     foldEndoArgs              = id
     dualFoldEndoArgs (Dual e) = e
 
+-- | This basically discards result of folding, in example:
+--
+-- >>> foldEndo ('n':) ('o':) :: Const () (Endo String)
+-- Const ()
 instance (Monoid c, FoldEndoArgs r) => FoldEndoArgs (Const c r) where
     type ResultOperatesOn (Const c r) = ResultOperatesOn r
     type Result (Const c r) = Const c (Result r)
@@ -205,6 +212,29 @@ instance FoldEndoArgs r => FoldEndoArgs (Identity r) where
     foldEndoArgs     = Identity . foldEndoArgs
     dualFoldEndoArgs = Identity . dualFoldEndoArgs
 
+-- | Allows endomorphism folding for endomorphisms wrapped inside 'IO' monad.
+-- Examples:
+--
+-- @
+-- 'foldEndo' <*> ((++) <$> getLine) <*> ((++) <$> getLine)
+--     :: :: ('FoldEndoArgs' r, 'ResultOperatesOn' r ~ String) => IO r
+-- @
+--
+-- In the next example, prefix @ghci\>@ indicates GHCi prompt, @ghci|@ is GHCi
+-- continuation prompt, @\<\<\<@ indicates user input and @\>\>\>@ GHCi output.
+-- Also, @:{@ and @:}@ is GHCi's way of starting and ending multiline mode,
+-- respectively.
+--
+-- @
+-- ghci\> :{
+-- ghci| 'Control.Monad.Endo.runEndo' \"\" '<&$>' 'foldEndo'
+-- ghci|     \<*\> ((++) \<$\> getLine)
+-- ghci|     \<*\> ((++) \<$\> getLine)
+-- ghci| :}
+-- \<\<\< alpha
+-- \<\<\< bet
+-- \>\>\> \"alphabet\"
+-- @
 instance FoldEndoArgs r => FoldEndoArgs (IO r) where
     type ResultOperatesOn (IO r) = ResultOperatesOn r
     type Result (IO r) = IO (Result r)
@@ -363,6 +393,33 @@ instance
 
 -- | Class that represents various endomorphism representation. In other words
 -- anything that encodes @a -> a@ can be instance of this class.
+--
+-- Here are some important instances with not so obvious definitions.
+--
+-- @
+-- instance 'AnEndo' ('Proxy' a) where
+--     type 'EndoOperatesOn' ('Proxy' a) = a
+--
+--     'anEndo'    _ = 'mempty' -- = Endo 'id'
+--     'aDualEndo' _ = 'mempty'
+-- @
+--
+-- It got quite common to use 'Proxy' data type as an explicit way to pass
+-- types around. Above instance allows you to restrict type of result of
+-- endomorphism folding, to some extent.
+--
+-- @
+-- instance 'AnEndo' a => 'AnEndo' (Maybe a) where
+--     type 'EndoOperatesOn' (Maybe a) = 'EndoOperatesOn' a
+--
+--     'anEndo' Nothing  = 'mempty' -- = Endo 'id'
+--     'anEndo' (Just e) = 'anEndo' e
+--
+--     -- Definition of 'aDualEndo' is analogous.
+-- @
+--
+-- Instance for @Maybe@ lets us conditionally inject endomorphism in to a
+-- folding chain.
 class AnEndo a where
     -- | Extract type on which endomorphism operates, e.g. for
     -- @'Endo' a@ it would be @a@.
