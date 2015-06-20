@@ -15,6 +15,12 @@ Endomorphism utilities.
 
 ## Usage Examples
 
+Examples in this section were taken from real live production code, but they
+were tamed down a little.
+
+
+### Basic Idea
+
 Lets define simple application `Config` data type as:
 
 ````Haskell
@@ -56,13 +62,19 @@ example1 = appEndo $ foldEndo
 ````
 
 Above example shows us that it is possible to modify `Config` as if it was a
-monoid, but without actually having to state it as such. In practice it is
-not always possible to define it as `Monoid` or at least a `Semigroup`. What
-usually works are endomorphisms, like in this example.
+monoid, but without actually having to state it as such. In practice it is not
+always possible to define it as `Monoid`, or at least as a `Semigroup`.
+Endomorphism are monoids under composition, therefore they are what usually
+works in situations when the modified data type can not be instantiated as a
+monoid.
 
-Now, `FilePath` has one pathological case, and that is `""`. There is a lot of
-ways to handle it. Here we will concentrate only few basic techniques to
-illustrate versatility of our approach.
+
+### Working With Corner Cases
+
+In real applications corner cases arise quite easily, e.g.
+`System.IO.FilePath` has one pathological case, and that is \"\". There
+is a lot of ways to handle it. Here we will concentrate only few basic
+techniques to illustrate versatility of our approach.
 
 ````Haskell
 -- | Trying to set output file to \"\" will result in keeping original value.
@@ -88,6 +100,14 @@ example3 = appEndo $ foldEndo
     &$ setVerbosity Annoying
     &$ setOutputFile3 "an.out.put"
 ````
+Great thing about `Maybe` is the fact that it has `Alternative` and `MonadPlus`
+instances. Using `guard` may simplify `setOutputFile3` in to definition like
+following:
+
+````Haskell
+setOutputFile3':: FilePath -> Maybe (E Config)
+setOutputFile3' fp = setOutputFile fp <$ guard (not (null fp))
+````
 
 Following example uses common pattern of using `Either` as error reporting
 monad. This approach can be easily modified for arbitrary error reporting
@@ -109,8 +129,11 @@ style, for setting record values, one needs to keep in sync order of
 constructor arguments and order of operations. Using `foldEndo` (and its
 dual `dualFoldEndo`) doesn't have this restriction.
 
-Instead of setter functions one may want to use lenses (in terms of
-[lens package][Hackage: lens]):
+### Lenses
+
+Instead of setter functions one may want to use lenses. In this example we use
+types from [lens package][Hackage: lens], but definitions use function from
+[between package][Hackage: between]:
 
 ````Haskell
 verbosity :: Lens' Config Verbosity
@@ -128,6 +151,8 @@ example5 = appEndo $ foldEndo
     &$ verbosity  .~ Annoying
     &$ outputFile .~ "an.out.put"
 ````
+
+### Other Usage
 
 Probably one of the most interesting things that can be done with this
 module is following:
@@ -255,6 +280,9 @@ afraid to contact author using GitHub or by e-mail.
 
 
 
+[Hackage: between]:
+  http://hackage.haskell.org/package/between
+  "between package on Hackage"
 [Hackage: endo]:
   http://hackage.haskell.org/package/endo
   "endo package on Hackage"

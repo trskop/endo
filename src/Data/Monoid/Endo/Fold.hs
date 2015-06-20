@@ -873,7 +873,7 @@ embedDualEndoWith = (. aDualEndo)
 --
 -- @
 -- data Verbosity = Silent | Normal | Verbose | Annoying
---   deriving (Bounded, Data, Enum, Eq, Ord, Show, Typeable)
+--   deriving (Show)
 --
 -- data Config = Config
 --     { _verbosity :: Verbosity
