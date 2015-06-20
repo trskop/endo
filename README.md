@@ -159,6 +159,7 @@ the above definitions:
 options :: Parser Config
 options = runIdentityT $ runEndo defaultConfig <$> options'
   where
+    -- All this IdentityT clutter is here to avoid orphan instances.
     options' :: IdentityT Parser (Endo Config)
     options' = foldEndo
         <*> outputOption     -- :: IdentityT Parser (Maybe (E Config))
