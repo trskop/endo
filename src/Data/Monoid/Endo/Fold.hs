@@ -2,7 +2,9 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
 
 #ifdef KIND_POLYMORPHIC_TYPEABLE
 {-# LANGUAGE DeriveDataTypeable #-}
@@ -29,7 +31,7 @@
 -- Maintainer:   peter.trsko@gmail.com
 -- Stability:    experimental
 -- Portability:  CPP, DeriveDataTypeable, DeriveGeneric, FlexibleInstances,
---               NoImplicitPrelude, TypeFamilies
+--               NoImplicitPrelude, RankNTypes, TypeOperators, TypeFamilies
 --
 -- Generic folding for various endomorphism representations.
 module Data.Monoid.Endo.Fold
@@ -65,7 +67,8 @@ module Data.Monoid.Endo.Fold
     -- ** Type Wrappers
     , WrappedFoldable(..)
 
-    -- * Utility Functions
+    -- * Utility Functions and Types
+    , (:->)
     , (&$)
     , (<&$>)
     , embedEndoWith
@@ -141,7 +144,7 @@ foldEndo = foldEndoArgs mempty
 -- Order in which endomorphisms are folded is reversed:
 --
 -- >>> dualFoldEndo (Endo (1:)) [(2:), (3:)] `appEndo` []
--- [2,3,1]
+-- [3,2,1]
 --
 -- For numbers it would look like:
 --
@@ -816,7 +819,27 @@ instance
 -- }}} Instances For Tuples ---------------------------------------------------
 -- }}} AnEndo Type Class ------------------------------------------------------
 
--- {{{ Utility Functions ------------------------------------------------------
+-- {{{ Utility Functions and Types --------------------------------------------
+
+-- | Type alias that restricts type of endomorphism folding result, and it
+-- looks similar to @->@. Example of creating version of 'foldEndo' with
+-- specific result:
+--
+-- @
+-- foldToEndoString :: FoldEndoArgs args => args :-> Endo String
+-- foldToEndoString = foldEndo
+-- @
+--
+-- >>> foldToEndoString ("foo" <>) ("bar" <>) `appEndo` "baz"
+-- "foobarbaz"
+--
+-- Following type signatures for 'foldEndoArgs' are equivalent:
+--
+-- @
+-- 'FoldEndoArgs' args => args ':->' 'Endo' String
+-- ('FoldEndoArgs' args, 'Result' args ~ 'Endo' String) => args
+-- @
+type args :-> r = (Result args ~ r) => args
 
 -- | Variant of function @('Data.Function.$') :: (a -> b) -> a -> b@, from
 -- "Data.Function" module, but with fixity as
@@ -865,7 +888,7 @@ embedDualEndoWith
     -> e -> b
 embedDualEndoWith = (. aDualEndo)
 
--- }}} Utility Functions ------------------------------------------------------
+-- }}} Utility Functions and Types --------------------------------------------
 
 -- $basicIdea
 --
