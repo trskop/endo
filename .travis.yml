@@ -34,4 +34,4 @@ script:
   - cabal build
 
   # Following line tests if sdist package is created correctly.
-  - cabal sdist | sed -rn '$s/^[^:]+: +//p' | xargs cabal install
+  - cabal sdist | sed -rn '$s/^[^:]+:\s+//p' | xargs cabal install
