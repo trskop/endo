@@ -6,6 +6,8 @@
 * Synchronized API documentation of `Data.Monoid.Endo.Fold` with README.
 * Introducing type `:->` to simplify type signatures of endomorphism folding
   functions that restrict type of a result. (**new**)
+* Bumped upper bound of [transformers package][transformers] to include 0.5.\*
+  versions. (**change**)
 
 
 ## Version 0.2.0.1
@@ -47,7 +49,7 @@
 ## Version 0.1.0.2
 
 * Bugfix release.
-* Bugfix: Unable to compile with transformers >= 0.4 (again).
+* Bugfix: Unable to compile with [transformers][] >= 0.4 (again).
 * Minor documentation updates.
 * Uploaded to [Hackage][]: <http://hackage.haskell.org/package/endo-0.1.0.2>
 
@@ -55,13 +57,13 @@
 ## Version 0.1.0.1
 
 * Bugfix release.
-* Bugfix: Unable to compile with transformers >= 0.4.
+* Bugfix: Unable to compile with [transformers][] >= 0.4.
 * Uploaded to [Hackage][]: <http://hackage.haskell.org/package/endo-0.1.0.1>
 
 
 ## Version 0.1.0.0
 
-* **This version doesn't work with transformers >= 0.4.**
+* **This version doesn't work with [transformers][] >= 0.4.**
 * First public release.
 * Uploaded to [Hackage][]: <http://hackage.haskell.org/package/endo-0.1.0.0>
 
@@ -70,6 +72,9 @@
 [Hackage]:
   http://hackage.haskell.org/
   "HackageDB (or just Hackage) is a collection of releases of Haskell packages."
+[transformers]:
+  https://hackage.haskell.org/package/transformers
+  "Package transformers on Hackage."
 
 <!--
   vim: filetype=markdown softtabstop=4 shiftwidth=4 expandtab
