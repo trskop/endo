@@ -826,8 +826,8 @@ instance
 -- specific result:
 --
 -- @
--- foldToEndoString :: FoldEndoArgs args => args :-> Endo String
--- foldToEndoString = foldEndo
+-- foldToEndoString :: 'FoldEndoArgs' args => args ':->' 'Endo' String
+-- foldToEndoString = 'foldEndo'
 -- @
 --
 -- >>> foldToEndoString ("foo" <>) ("bar" <>) `appEndo` "baz"
@@ -867,7 +867,7 @@ infixl 1 <&$>
 --     => e
 --     -> 'Control.Monad.Trans.Writer.Lazy.WriterT' ('Endo' w) m ()
 --
--- 'embedEndoWith' 'Control.Monad.Trans.State.Lazy.modify'
+-- 'embedEndoWith' ('Control.Monad.Trans.State.Lazy.modify' . 'Data.Monoid.appEndo')
 --     :: (Monad m, 'AnEndo' e, s ~ 'EndoOperatesOn' e)
 --     => e
 --     -> 'Control.Monad.Trans.State.Lazy.StateT' s m ()
