@@ -75,7 +75,7 @@ instance FromEndo (Endo a) where
     fromDualEndo = getDual
 
 instance FromEndo e => FromEndo (Dual e) where
-    type EndoOperatedOn (Dual a) = EndoOperatedOn a
+    type EndoOperatedOn (Dual e) = EndoOperatedOn e
 
     fromEndo = Dual . fromEndo
     fromDualEndo = Dual . fromDualEndo
