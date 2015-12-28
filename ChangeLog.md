@@ -8,6 +8,9 @@
 * Type class `AnEndo` moved in to a separate module `Data.Monoid.Endo.AnEndo`.
   Definitions are reexported by `Data.Monoid.Endo.Fold`, therefore providing
   backward compatible API. (**change**)
+* Introducing `FromeEndo` type class for conversion of endomorphism in to a
+  value. It is a dual to `AnEndo` type class. This type class resides in its
+  own module `Data.Monoid.Endo.FromEndo`. (**new**)
 * Bumped upper bound of [transformers package][transformers] to include 0.5.\*
   versions. (**change**)
 * Synchronized API documentation of `Data.Monoid.Endo.Fold` with README.

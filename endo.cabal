@@ -81,6 +81,7 @@ library
       Data.Monoid.Endo
     , Data.Monoid.Endo.AnEndo
     , Data.Monoid.Endo.Fold
+    , Data.Monoid.Endo.FromEndo
 
   default-language:     Haskell2010
   other-extensions:
