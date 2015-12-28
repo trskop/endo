@@ -3,11 +3,15 @@
 
 ## Version 0.2.1.0
 
-* Synchronized API documentation of `Data.Monoid.Endo.Fold` with README.
 * Introducing type `:->` to simplify type signatures of endomorphism folding
   functions that restrict type of a result. (**new**)
+* Type class `AnEndo` moved in to a separate module `Data.Monoid.Endo.AnEndo`.
+  Definitions are reexported by `Data.Monoid.Endo.Fold`, therefore providing
+  backward compatible API. (**change**)
 * Bumped upper bound of [transformers package][transformers] to include 0.5.\*
   versions. (**change**)
+* Synchronized API documentation of `Data.Monoid.Endo.Fold` with README.
+  (**trivial change**)
 
 
 ## Version 0.2.0.1
