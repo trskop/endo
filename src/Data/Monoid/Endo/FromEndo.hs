@@ -18,7 +18,9 @@ module Data.Monoid.Endo.FromEndo
     -- * Convert Endo to a Value
       FromEndo(..)
     , fromEndoWith
+    , fromEndoWithF
     , fromDualEndoWith
+    , fromDualEndoWithF
     , fromEndoTo
     , fromDualEndoTo
     )
@@ -26,6 +28,7 @@ module Data.Monoid.Endo.FromEndo
 
 import Control.Monad (Monad)
 import Data.Function ((.), id)
+import Data.Functor (Functor(fmap))
 import Data.Monoid (Dual(Dual, getDual), Endo(Endo, appEndo), Monoid)
 
 import Control.Monad.Trans.Reader (ReaderT)
@@ -150,6 +153,12 @@ instance Monad f => FromEndo (Strict.StateT s f ()) where
 fromEndoWith :: (FromEndo a, EndoOperatedOn a ~ c) => (a -> b) -> Endo c -> b
 fromEndoWith = (. fromEndo)
 
+-- | Same as 'fromEndoWith', but deals with 'Endo' wrapped inside a 'Functor'.
+fromEndoWithF
+    :: (Functor f, FromEndo a, EndoOperatedOn a ~ c)
+    => (f a -> b) -> f (Endo c) -> b
+fromEndoWithF = (. fmap fromEndo)
+
 -- | In a lot of cases it is necessary to evaluate result of 'fromDualEndo'.
 -- Example:
 --
@@ -167,8 +176,19 @@ fromDualEndoWith
     :: (FromEndo a, EndoOperatedOn a ~ c) => (a -> b) -> Dual (Endo c) -> b
 fromDualEndoWith = (. fromDualEndo)
 
+-- | Same as 'fromDualEndoWith', but deals with @'Dual' 'Endo'@ wrapped inside
+-- a 'Functor'.
+fromDualEndoWithF
+    :: (Functor f, FromEndo a, EndoOperatedOn a ~ c)
+    => (f a -> b) -> f (Dual (Endo c)) -> b
+fromDualEndoWithF = (. fmap fromDualEndo)
+
+-- | Variant of 'fromEndo' that takes type restriction on the result type @a@
+-- as an argument.
 fromEndoTo :: FromEndo a => Endo (EndoOperatedOn a) -> proxy a -> a
 fromEndoTo e _ = fromEndo e
 
+-- | Variant of 'fromDualEndo' that takes type restriction on the result type
+-- @a@ as an argument.
 fromDualEndoTo :: FromEndo a => Dual (Endo (EndoOperatedOn a)) -> proxy a -> a
 fromDualEndoTo e _ = fromDualEndo e
