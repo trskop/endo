@@ -79,6 +79,7 @@ library
   hs-source-dirs:       src
   exposed-modules:
       Data.Monoid.Endo
+    , Data.Monoid.Endo.AnEndo
     , Data.Monoid.Endo.Fold
 
   default-language:     Haskell2010
