@@ -80,6 +80,7 @@ library
   exposed-modules:
       Data.Monoid.Endo
     , Data.Monoid.Endo.AnEndo
+    , Data.Monoid.Endo.Apply
     , Data.Monoid.Endo.Fold
     , Data.Monoid.Endo.FromEndo
 
@@ -98,6 +99,7 @@ library
     -- }}} Distributed with GHC or Haskell Platform ---------------------------
 
     , between >=0.9 && <0.11
+    , data-default-class ==0.0.*
 
   if impl(GHC >= 7.8)
     cpp-options:        -DHAVE_MINIMAL_PRAGMA
