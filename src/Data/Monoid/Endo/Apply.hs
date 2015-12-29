@@ -48,7 +48,7 @@ import Data.Data (Data, Typeable)
 
 import Data.Default.Class (Default(def))
 
-import Data.Monoid.Endo.FromEndo (FromEndo(EndoOperatedOn, fromEndo))
+import Data.Monoid.Endo.FromEndo (FromEndo(..))
 
 
 -- | There are cases when it is \"obvious\" what is the default value, which
@@ -116,7 +116,14 @@ applyMempty' :: Monoid a => ApplyEndo Mempty Identity a -> a
 applyMempty' = runIdentity . applyMempty
 {-# INLINE applyMempty' #-}
 
-joinApplyMempty :: (Monad m, Monoid a) => m (ApplyEndo Mempty m a) -> m a
+joinApplyMempty
+    ::  ( Monad m
+        , Monoid a
+#ifndef APPLICATIVE_MONAD
+        , Applicative m
+#endif
+        )
+    => m (ApplyEndo Mempty m a) -> m a
 joinApplyMempty = (>>= applyMempty)
 {-# INLINE joinApplyMempty #-}
 
@@ -155,7 +162,14 @@ applyDef' :: Default a => ApplyEndo Def Identity a -> a
 applyDef' = runIdentity . applyDef
 {-# INLINE applyDef' #-}
 
-joinApplyDef :: (Monad m, Default a) => m (ApplyEndo Def m a) -> m a
+joinApplyDef
+    ::  ( Monad m
+        , Default a
+#ifndef APPLICATIVE_MONAD
+        , Applicative m
+#endif
+        )
+    => m (ApplyEndo Def m a) -> m a
 joinApplyDef = (>>= applyDef)
 {-# INLINE joinApplyDef #-}
 
