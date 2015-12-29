@@ -11,6 +11,10 @@
 * Introducing `FromEndo` type class for conversion of endomorphism in to a
   value. It is a dual to `AnEndo` type class. This type class resides in its
   own module `Data.Monoid.Endo.FromEndo`. (**new**)
+* Introducing `ApplyEndo` newtype that provides easier endomorphism evaluation
+  in cases when there is an "obvious" default value. This type has its own
+  module `Data.Monoid.Endo.Apply` that also provides various helper functions
+  and type class instances. (**new**)
 * Bumped upper bound of [transformers package][transformers] to include 0.5.\*
   versions. (**change**)
 * Synchronized API documentation of `Data.Monoid.Endo.Fold` with README.
