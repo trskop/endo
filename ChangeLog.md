@@ -1,7 +1,7 @@
 # ChangeLog / ReleaseNotes
 
 
-## Version 0.2.1.0
+## Version 0.3.0.0
 
 * Introducing type `:->` to simplify type signatures of endomorphism folding
   functions that restrict type of a result. (**new**)
