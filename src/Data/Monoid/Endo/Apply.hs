@@ -80,6 +80,7 @@ apply :: Applicative f => a -> Endo a -> ApplyEndo t f a
 apply defaultValue (Endo f) = ApplyEndo . pure $ f defaultValue
 {-# INLINE apply #-}
 
+-- | Similar as 'apply', but expects 'Endo' to be wrapped by a 'Functor'.
 applyF :: Functor f => a -> f (Endo a) -> ApplyEndo t f a
 applyF defaultValue endo = ApplyEndo $ (`appEndo` defaultValue) <$> endo
 
@@ -116,6 +117,12 @@ applyMempty' :: Monoid a => ApplyEndo Mempty Identity a -> a
 applyMempty' = runIdentity . applyMempty
 {-# INLINE applyMempty' #-}
 
+-- | Evaluates 'ApplyEndo' in a 'Monad' by joining it with the monad it
+-- contains. It can be also viewed as a variant of 'applyMempty' defined as:
+--
+-- @
+-- 'joinApplyMempty' = ('>>=' 'applyMempty')
+-- @
 joinApplyMempty
     ::  ( Monad m
         , Monoid a
@@ -162,6 +169,12 @@ applyDef' :: Default a => ApplyEndo Def Identity a -> a
 applyDef' = runIdentity . applyDef
 {-# INLINE applyDef' #-}
 
+-- | Evaluates 'ApplyEndo' in a 'Monad' by joining it with the monad it
+-- contains. It can be also viewed as a variant of 'applyDef' defined as:
+--
+-- @
+-- 'joinApplyDef' = ('>>=' 'applyDef')
+-- @
 joinApplyDef
     ::  ( Monad m
         , Default a
