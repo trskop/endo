@@ -29,6 +29,11 @@ module Data.Monoid.Endo.Apply
     , applyDef
     , applyDef'
     , joinApplyDef
+
+    -- ** ApplyEndo Reader
+    , Reader
+    , applyReader
+    , joinApplyReader
     )
   where
 
@@ -45,6 +50,9 @@ import GHC.Generics (Generic)
 #ifdef KIND_POLYMORPHIC_TYPEABLE
 import Data.Data (Data, Typeable)
 #endif
+
+import Control.Monad.Reader.Class (MonadReader)
+import qualified Control.Monad.Reader.Class as MonadReader (asks)
 
 import Data.Default.Class (Default(def))
 
@@ -187,3 +195,38 @@ joinApplyDef = (>>= applyDef)
 {-# INLINE joinApplyDef #-}
 
 -- }}} ApplyEndo Def ----------------------------------------------------------
+
+-- {{{ ApplyEndo Reader -------------------------------------------------------
+
+data Reader
+  deriving
+    ( Generic
+#ifdef KIND_POLYMORPHIC_TYPEABLE
+    , Typeable
+#endif
+    )
+
+-- | Evaluates 'ApplyEndo' in terms of 'MonadReader.asks' operation:
+--
+-- @
+-- 'fromEndo' = 'ApplyEndo' . 'MonadReader.asks' . 'appEndo'
+-- @
+instance MonadReader r m => FromEndo (ApplyEndo Reader m r) where
+    type EndoOperatedOn (ApplyEndo Reader f r) = r
+
+    fromEndo = ApplyEndo . MonadReader.asks . appEndo
+
+-- | Evaluates 'ApplyEndo' in terms of 'MonadReader.asks' operation.
+applyReader :: MonadReader r m => ApplyEndo Reader m r -> m r
+applyReader = applyEndo
+
+-- | Evaluates 'ApplyEndo' in a 'Monad' by joining it with the monad it
+-- contains. It can be also viewed as a variant of 'applyReader' defined as:
+--
+-- @
+-- 'joinApplyReader' = ('>>=' 'applyReader')
+-- @
+joinApplyReader :: MonadReader r m => m (ApplyEndo Reader m r) -> m r
+joinApplyReader = (>>= applyEndo)
+
+-- }}} ApplyEndo Reader -------------------------------------------------------
