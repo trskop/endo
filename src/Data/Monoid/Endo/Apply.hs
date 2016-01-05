@@ -212,7 +212,7 @@ data Reader
 -- 'fromEndo' = 'ApplyEndo' . 'MonadReader.asks' . 'appEndo'
 -- @
 instance MonadReader r m => FromEndo (ApplyEndo Reader m r) where
-    type EndoOperatedOn (ApplyEndo Reader f r) = r
+    type EndoOperatedOn (ApplyEndo Reader m r) = r
 
     fromEndo = ApplyEndo . MonadReader.asks . appEndo
 
