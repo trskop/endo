@@ -70,10 +70,18 @@ import Control.Monad
     ( Monad((>>=), return)
 #ifdef APPLICATIVE_MONAD
     , void
+#else
+    liftM
 #endif
     )
 import Data.Foldable (Foldable)
-import Data.Function ((.), ($))
+import Data.Function
+    ( (.)
+    , ($)
+#ifndef APPLICATIVE_MONAD
+    , const
+#endif
+    )
 import Data.Functor (Functor, (<$>))
 import Data.Functor.Identity (Identity(runIdentity))
 import Data.Monoid (Endo(Endo, appEndo), Monoid(mempty))
@@ -341,7 +349,7 @@ joinApplyModify' = (>>= applyEndo)
 
 #ifndef APPLICATIVE_MONAD
 void :: Monad m => m a -> m ()
-void = (>> return ())
+void = liftM $ const ()
 #endif
 
 -- {{{ Helper functions (not exported) ----------------------------------------
