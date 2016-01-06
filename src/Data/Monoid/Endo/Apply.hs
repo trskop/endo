@@ -34,11 +34,29 @@ module Data.Monoid.Endo.Apply
     , Reader
     , applyReader
     , joinApplyReader
+
+    -- ** ApplyEndo Modify
+    , Modify
+    , applyModify
+    , joinApplyModify
+
+    -- ** ApplyEndo Modify'
+    , Modify'
+    , applyModify'
+    , joinApplyModify'
+
     )
   where
 
+import Prelude (seq)
+
 import Control.Applicative (Applicative((<*>), pure))
-import Control.Monad (Monad((>>=), return))
+import Control.Monad
+    ( Monad((>>=), return)
+#ifdef APPLICATIVE_MONAD
+    , void
+#endif
+    )
 import Data.Foldable (Foldable)
 import Data.Function ((.), ($))
 import Data.Functor (Functor, (<$>))
@@ -53,6 +71,8 @@ import Data.Data (Data, Typeable)
 
 import Control.Monad.Reader.Class (MonadReader)
 import qualified Control.Monad.Reader.Class as MonadReader (asks)
+import Control.Monad.State.Class (MonadState)
+import qualified Control.Monad.State.Class as MonadState (state)
 
 import Data.Default.Class (Default(def))
 
@@ -230,3 +250,83 @@ joinApplyReader :: MonadReader r m => m (ApplyEndo Reader m r) -> m r
 joinApplyReader = (>>= applyEndo)
 
 -- }}} ApplyEndo Reader -------------------------------------------------------
+
+-- {{{ ApplyEndo Modify -------------------------------------------------------
+
+data Modify
+  deriving
+    ( Generic
+#ifdef KIND_POLYMORPHIC_TYPEABLE
+    , Typeable
+#endif
+    )
+
+-- | Evaluates 'ApplyEndo' in terms of 'MonadState.state' operation:
+--
+-- @
+-- 'fromEndo' e = 'ApplyEndo' . 'MonadState.state' '$' \\s ->
+--     let s' = 'appEndo' e s in (s', s')
+-- @
+instance MonadState s m => FromEndo (ApplyEndo Modify m s) where
+    type EndoOperatedOn (ApplyEndo Modify m s) = s
+
+    fromEndo e =
+        ApplyEndo . MonadState.state $ \s -> let s' = appEndo e s in (s', s')
+
+-- | Evaluates 'ApplyEndo' in terms of 'MonadState.state' operation.
+applyModify :: MonadState s m => ApplyEndo Modify m s -> m s
+applyModify = applyEndo
+
+-- | Evaluates 'ApplyEndo' in a 'Monad' by joining it with the monad it
+-- contains. It can be also viewed as a variant of 'applyModify' defined as:
+--
+-- @
+-- 'joinApplyModify' = ('>>=' 'applyModify')
+-- @
+joinApplyModify :: MonadState s m => m (ApplyEndo Modify m s) -> m s
+joinApplyModify = (>>= applyEndo)
+
+-- | Same as 'Modify', but strictness is implied.
+data Modify'
+  deriving
+    ( Generic
+#ifdef KIND_POLYMORPHIC_TYPEABLE
+    , Typeable
+#endif
+    )
+
+-- | Evaluates 'ApplyEndo' in terms of 'MonadState.state' operation:
+--
+-- @
+-- 'fromEndo' ('Endo' f) = 'ApplyEndo' . 'MonadState.state' $ \\s ->
+--     let s' = f s in s' \`seq\` (s', s')
+-- @
+instance MonadState s m => FromEndo (ApplyEndo Modify' m s) where
+    type EndoOperatedOn (ApplyEndo Modify' m s) = s
+
+    fromEndo (Endo f) =
+        ApplyEndo . MonadState.state $ \s -> let s' = f s in s' `seq` (s', s')
+
+-- | Evaluates 'ApplyEndo' in terms of 'MonadState.state' operation.
+applyModify' :: MonadState r m => ApplyEndo Modify' m () -> m ()
+applyModify' = void . applyEndo
+
+-- | Evaluates 'ApplyEndo' in a 'Monad' by joining it with the monad it
+-- contains. It can be also viewed as a variant of 'applyModify'' defined as:
+--
+-- @
+-- 'joinApplyModify'' = ('>>=' 'applyModify'')
+-- @
+joinApplyModify' :: MonadState r m => m (ApplyEndo Modify' m r) -> m r
+joinApplyModify' = (>>= applyEndo)
+
+-- }}} ApplyEndo Modify -------------------------------------------------------
+
+-- {{{ Helper functions (not exported) ----------------------------------------
+
+#ifndef APPLICATIVE_MONAD
+void :: Monad m => m a -> m ()
+void = (>> return ())
+#endif
+
+-- {{{ Helper functions (not exported) ----------------------------------------
