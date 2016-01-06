@@ -36,13 +36,13 @@ module Data.Monoid.Endo.Apply
     -- ** ApplyEndo Mempty
     , Mempty
     , applyMempty
-    , applyMempty'
+    , applyMempty_
     , joinApplyMempty
 
     -- ** ApplyEndo Def
     , Def
     , applyDef
-    , applyDef'
+    , applyDef_
     , joinApplyDef
 
     -- ** ApplyEndo Reader
@@ -152,13 +152,13 @@ applyMempty = applyEndo
 --
 -- Examples:
 --
--- >>> fromEndoWith applyMempty' $ foldEndo (+1) [(*10), (+42)] :: Int
+-- >>> fromEndoWith applyMempty_ $ foldEndo (+1) [(*10), (+42)] :: Int
 -- 421
--- >>> fromEndoWith applyMempty' $ dualFoldEndo (+1) [(*10), (+42)] :: Int
+-- >>> fromEndoWith applyMempty_ $ dualFoldEndo (+1) [(*10), (+42)] :: Int
 -- 52
-applyMempty' :: Monoid a => ApplyEndo Mempty Identity a -> a
-applyMempty' = runIdentity . applyMempty
-{-# INLINE applyMempty' #-}
+applyMempty_ :: Monoid a => ApplyEndo Mempty Identity a -> a
+applyMempty_ = runIdentity . applyMempty
+{-# INLINE applyMempty_ #-}
 
 -- | Evaluates 'ApplyEndo' in a 'Monad' by joining it with the monad it
 -- contains. It can be also viewed as a variant of 'applyMempty' defined as:
@@ -204,13 +204,13 @@ applyDef = applyEndo
 --
 -- Examples:
 --
--- >>> fromEndoWith applyDef' $ foldEndo (+1) [(*10), (+42)] :: Int
+-- >>> fromEndoWith applyDef_ $ foldEndo (+1) [(*10), (+42)] :: Int
 -- 421
--- >>> fromEndoWith applyDef' $ dualFoldEndo (+1) [(*10), (+42)] :: Int
+-- >>> fromEndoWith applyDef_ $ dualFoldEndo (+1) [(*10), (+42)] :: Int
 -- 52
-applyDef' :: Default a => ApplyEndo Def Identity a -> a
-applyDef' = runIdentity . applyDef
-{-# INLINE applyDef' #-}
+applyDef_ :: Default a => ApplyEndo Def Identity a -> a
+applyDef_ = runIdentity . applyDef
+{-# INLINE applyDef_ #-}
 
 -- | Evaluates 'ApplyEndo' in a 'Monad' by joining it with the monad it
 -- contains. It can be also viewed as a variant of 'applyDef' defined as:
