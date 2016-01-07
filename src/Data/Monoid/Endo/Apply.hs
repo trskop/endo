@@ -71,7 +71,7 @@ import Control.Monad
 #ifdef APPLICATIVE_MONAD
     , void
 #else
-    liftM
+    , liftM
 #endif
     )
 import Data.Foldable (Foldable)
