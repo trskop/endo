@@ -48,6 +48,7 @@ module Data.Monoid.Endo.Apply
     -- ** ApplyEndo Reader
     , Reader
     , applyReader
+    , applyReaderWith
     , joinApplyReader
 
     -- ** ApplyEndo Modify
@@ -260,8 +261,25 @@ instance MonadReader r m => FromEndo (ApplyEndo Reader m r) where
     fromEndo = ApplyEndo . MonadReader.asks . appEndo
 
 -- | Evaluates 'ApplyEndo' in terms of 'MonadReader.asks' operation.
+--
+-- This @(->) r@ is a valid 'MonadReader' instance, therefore, this is a valid
+-- use case:
+--
+-- >>> (applyReader . fromEndo $ foldEndo (*10) (+1)) 0 :: Int
+-- 10
 applyReader :: MonadReader r m => ApplyEndo Reader m r -> m r
 applyReader = applyEndo
+
+-- | Evaluates 'ApplyEndo' in terms of 'MonadReader.asks' operation and then
+-- evaluates the resalt using provided function.
+--
+-- This @(->) r@ is a valid 'MonadReader' instance, therefore, this is a valid
+-- use case:
+--
+-- >>> applyReaderWith ($ 0) . fromEndo $ foldEndo (*10) (+1) :: Int
+-- 10
+applyReaderWith :: MonadReader r m => (m r -> a) -> ApplyEndo Reader m r -> a
+applyReaderWith = (. applyEndo)
 
 -- | Evaluates 'ApplyEndo' in a 'Monad' by joining it with the monad it
 -- contains. It can be also viewed as a variant of 'applyReader' defined as:
