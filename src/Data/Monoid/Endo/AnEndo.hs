@@ -19,7 +19,7 @@
 -- |
 -- Module:       $HEADER$
 -- Description:  Conversion of values in to endomorphisms.
--- Copyright:    (c) 2014-2015, Peter Trško
+-- Copyright:    (c) 2014-2016, Peter Trško
 -- License:      BSD3
 --
 -- Maintainer:   peter.trsko@gmail.com
@@ -56,8 +56,14 @@ import Control.Monad (Monad)
 import Data.Foldable (Foldable(foldMap))
 import Data.Function ((.), id)
 import Data.Functor (Functor)
+import Data.Functor.Identity (Identity(Identity))
 import Data.Maybe (Maybe(Just, Nothing))
-import Data.Monoid (Dual(Dual, getDual), Endo(Endo), Monoid(mempty, mconcat), (<>))
+import Data.Monoid
+    ( Dual(Dual, getDual)
+    , Endo(Endo)
+    , Monoid(mempty, mconcat)
+    , (<>)
+    )
 import Data.Traversable (Traversable)
 import GHC.Generics (Generic)
 import Text.Read (Read)
@@ -138,6 +144,12 @@ instance AnEndo (Endo a) where
 instance AnEndo (a -> a) where
     type EndoOperatesOn (a -> a) = a
     anEndo = Endo
+
+instance AnEndo a => AnEndo (Identity a) where
+    type EndoOperatesOn (Identity a) = EndoOperatesOn a
+
+    anEndo (Identity e) = anEndo e
+    aDualEndo (Identity e) = aDualEndo e
 
 instance AnEndo a => AnEndo (Maybe a) where
     type EndoOperatesOn (Maybe a) = EndoOperatesOn a
