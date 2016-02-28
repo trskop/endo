@@ -20,6 +20,9 @@
   [transformers package][transformers] >=0.5 or base >=4.9 (i.e. GHC
   >=8.0.1) is available. (**new**)
 * Providing `Generic1` instance for `WrappedFoldable`. (**new**)
+* Introducing `instance AnEndo a => AnEndo (Option a)`, but only when compiled
+  with base >=4.9, since that is the first version of base which contains
+  `Semigroup`. (**new**)
 * Bumped upper bound of [transformers package][transformers] to include 0.5.\*
   versions. (**change**)
 * Synchronized API documentation of `Data.Monoid.Endo.Fold` with README.

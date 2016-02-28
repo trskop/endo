@@ -74,6 +74,9 @@ import Data.Monoid
     , Monoid(mempty, mconcat)
     , (<>)
     )
+#ifdef HAVE_SEMIGROUPS
+import Data.Semigroup (Option(Option))
+#endif
 import Data.Traversable (Traversable)
 import GHC.Generics (Generic, Generic1)
 import Text.Read (Read)
@@ -188,6 +191,16 @@ instance AnEndo (Proxy a) where
 
     anEndo    Proxy = mempty
     aDualEndo Proxy = mempty
+#endif
+
+#ifdef HAVE_SEMIGROUPS
+-- | Has same semantics as 'Maybe' and it is actually defined in terms of
+-- 'AnEndo' instance for 'Maybe'.
+instance AnEndo a => AnEndo (Option a) where
+    type EndoOperatesOn (Option a) = EndoOperatesOn a
+
+    anEndo (Option maybe) = anEndo maybe
+    aDualEndo (Option maybe) = aDualEndo maybe
 #endif
 
 -- {{{ Foldable Instances -----------------------------------------------------
