@@ -16,6 +16,10 @@
 #define HAVE_PROXY
 #endif
 
+#if MIN_VERSION_transformers(0,5,0) || MIN_VERSION_base(4,9,0)
+#define HAVE_FUNCTOR_CLASSES
+#endif
+
 -- |
 -- Module:       $HEADER$
 -- Description:  Conversion of values in to endomorphisms.
@@ -30,7 +34,6 @@
 -- Conversion of values in to endomorphisms.
 module Data.Monoid.Endo.AnEndo
     (
-
     -- * Conversion Into Endo
     --
     -- | Various types can encode endomorphisms. In example, enum can be viewed
@@ -54,8 +57,19 @@ module Data.Monoid.Endo.AnEndo
 import Control.Applicative (Applicative)
 import Control.Monad (Monad)
 import Data.Foldable (Foldable(foldMap))
-import Data.Function ((.), id)
+import Data.Function (($), (.), id)
 import Data.Functor (Functor)
+#ifdef HAVE_FUNCTOR_CLASSES
+import Data.Functor.Classes
+    ( Eq1
+    , Ord1
+    , Read1(liftReadsPrec)
+    , Show1(liftShowsPrec)
+    , readsData
+    , readsUnaryWith
+    , showsUnaryWith
+    )
+#endif
 import Data.Functor.Identity (Identity(Identity))
 import Data.Maybe (Maybe(Just, Nothing))
 import Data.Monoid
@@ -188,7 +202,22 @@ newtype WrappedFoldable f a = WrapFoldable {getFoldable :: f a}
     , Data
     , Typeable
 #endif
+#ifdef HAVE_FUNCTOR_CLASSES
+    , Eq1
+    , Ord1
+#endif
     )
+
+#ifdef HAVE_FUNCTOR_CLASSES
+instance Read1 f => Read1 (WrappedFoldable f) where
+    liftReadsPrec rp rl = readsData
+        $ readsUnaryWith (liftReadsPrec rp rl) "WrapFoldable" WrapFoldable
+
+instance Show1 f => Show1 (WrappedFoldable f) where
+    liftShowsPrec sp sl d (WrapFoldable x) =
+        showsUnaryWith (liftShowsPrec sp sl) "WrapFoldable" d x
+#endif
+    -- HAVE_FUNCTOR_CLASSES
 
 instance (Foldable f, AnEndo a) => AnEndo (WrappedFoldable f a) where
     type EndoOperatesOn (WrappedFoldable f a) = EndoOperatesOn a
