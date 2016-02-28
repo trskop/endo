@@ -17,8 +17,8 @@
   module `Data.Monoid.Endo.Apply` that also provides various helper functions
   and type class instances. (**new**)
 * Providing `Eq1`, `Ord1`, `Read1` and `Show1` instances if built with
-  [transformers package][transformers] >=0.5 or base >=4.9 (i.e. GHC
-  >=8.0.1) is available. (**new**)
+  [transformers package][transformers] >=0.5 or base >=4.9 (i.e.
+  GHC >=8.0.1) is available. (**new**)
 * Providing `Generic1` instance for `WrappedFoldable`. (**new**)
 * Introducing `instance AnEndo a => AnEndo (Option a)`, but only when compiled
   with base >=4.9, since that is the first version of base which contains
