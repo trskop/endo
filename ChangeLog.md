@@ -27,6 +27,7 @@
   versions. (**change**)
 * Synchronized API documentation of `Data.Monoid.Endo.Fold` with README.
   (**trivial change**)
+* Uploaded to [Hackage][]: <http://hackage.haskell.org/package/endo-0.3.0.0>
 
 
 ## Version 0.2.0.1
