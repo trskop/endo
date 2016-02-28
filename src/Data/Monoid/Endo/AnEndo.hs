@@ -32,11 +32,11 @@ module Data.Monoid.Endo.AnEndo
     (
     -- * Conversion Into Endo
     --
-    -- | Various types can encode endomorphisms. In example, enum can be viewed
-    -- as family of endomorphisms where each sets a specific field of a record
-    -- to a specific enum value, i.e. data constructor. Type class 'AnEndo'
-    -- provides generic way to convert values in to an endomorphism using
-    -- 'anEndo' and 'aDualEndo' functions.
+    -- | Various types can be interpreted as an encoding of an endomorphism. In
+    -- example, enum can be viewed as family of endomorphisms where each sets a
+    -- specific field of a record to a specific enum value, i.e. data
+    -- constructor. Type class 'AnEndo' provides generic way to convert values
+    -- in to an endomorphism using 'anEndo' and 'aDualEndo' functions.
       AnEndo(..)
 
     -- ** WrappedFoldable
@@ -110,17 +110,28 @@ import Data.Functor.Reverse (Reverse)
 -- endomorphism folding, to some extent.
 --
 -- @
--- instance 'AnEndo' a => 'AnEndo' (Maybe a) where
---     type 'EndoOperatesOn' (Maybe a) = 'EndoOperatesOn' a
+-- instance 'AnEndo' a => 'AnEndo' ('Maybe' a) where
+--     type 'EndoOperatesOn' ('Maybe' a) = 'EndoOperatesOn' a
 --
---     'anEndo' Nothing  = 'mempty' -- = Endo 'id'
---     'anEndo' (Just e) = 'anEndo' e
+--     'anEndo' 'Nothing'  = 'mempty' -- = Endo 'id'
+--     'anEndo' ('Just' e) = 'anEndo' e
 --
 --     -- Definition of 'aDualEndo' is analogous.
 -- @
 --
 -- Instance for @Maybe@ lets us conditionally inject endomorphism in to a
 -- folding chain.
+--
+-- @
+-- instance 'AnEndo' a => 'AnEndo' ('Identity' a) where
+--     type 'EndoOperatesOn' ('Identity' a) = 'EndoOperatesOn' a
+--
+--     'anEndo' ('Identity' e) = 'anEndo' e
+--     'aDualEndo' ('Identity' e) = 'aDualEndo' e
+-- @
+--
+-- Above instance allows us to discard 'Identity' wrapper, which is commonly
+-- used in data types that are parametrized by functor or monad.
 class AnEndo a where
     -- | Extract type on which endomorphism operates, e.g. for
     -- @('Endo' a)@ it would be @a@.

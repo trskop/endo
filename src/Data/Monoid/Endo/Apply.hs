@@ -178,6 +178,11 @@ instance (Applicative f, Monoid a) => FromEndo (ApplyEndo Mempty f a) where
 
     fromEndo = apply mempty
 
+-- | Constrained version of 'applyEndo'. Usage example:
+--
+-- @
+-- applyMempty . fromEndo :: ('Applicative' f, 'Monoid' a) => 'Endo' a -> f a
+-- @
 applyMempty :: Monoid a => ApplyEndo Mempty f a -> f a
 applyMempty = applyEndo
 {-# INLINE applyMempty #-}
@@ -242,6 +247,11 @@ instance (Applicative f, Default a) => FromEndo (ApplyEndo Def f a) where
 
     fromEndo = apply def
 
+-- | Constrained version of 'applyEndo'. Usage example:
+--
+-- @
+-- applyDef . fromEndo :: ('Applicative' f, 'Default' a) => 'Endo' a -> f a
+-- @
 applyDef :: (Applicative f, Default a) => ApplyEndo Def f a -> f a
 applyDef = applyEndo
 {-# INLINE applyDef #-}
@@ -280,6 +290,8 @@ joinApplyDef = (>>= applyDef)
 
 -- {{{ ApplyEndo Reader -------------------------------------------------------
 
+-- | Type tag identifying usage of 'MonadReader.asks' operation in 'FromEndo'
+-- instance of 'ApplyEndo'.
 data Reader
   deriving
     ( Generic
@@ -332,6 +344,8 @@ joinApplyReader = (>>= applyEndo)
 
 -- {{{ ApplyEndo Modify -------------------------------------------------------
 
+-- | Type tag identifying usage of 'MonadState.state' operation in 'FromEndo'
+-- instance of 'ApplyEndo'.
 data Modify
   deriving
     ( Generic

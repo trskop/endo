@@ -223,8 +223,8 @@ instance FoldEndoArgs r => FoldEndoArgs (Identity r) where
 -- Examples:
 --
 -- @
--- 'foldEndo' \<*\> ((++) \<$\> getLine) \<*\> ((++) \<$\> getLine)
---     :: :: ('FoldEndoArgs' r, 'ResultOperatesOn' r ~ String) => IO r
+-- 'foldEndo' \<*\> ((<>) \<$\> getLine) \<*\> ((<>) \<$\> getLine)
+--     :: ('FoldEndoArgs' r, 'ResultOperatesOn' r ~ String) => IO r
 -- @
 --
 -- In the next example, prefix @ghci\>@ indicates GHCi prompt, @ghci|@ is GHCi
