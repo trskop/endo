@@ -1,14 +1,17 @@
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE DeriveFoldable #-}
-{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE DeriveTraversable #-}  -- GeneralizedNewtypeDeriving failed.
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE TypeFamilies #-}
 
 #ifdef KIND_POLYMORPHIC_TYPEABLE
 {-# LANGUAGE DeriveDataTypeable #-}
+#endif
+
+#if MIN_VERSION_transformers(0,5,0) || MIN_VERSION_base(4,9,0)
+#define HAVE_FUNCTOR_CLASSES
 #endif
 
 -- |
@@ -84,6 +87,17 @@ import Data.Function
 #endif
     )
 import Data.Functor (Functor, (<$>))
+#ifdef HAVE_FUNCTOR_CLASSES
+import Data.Functor.Classes
+    ( Eq1
+    , Ord1
+    , Read1(liftReadsPrec)
+    , Show1(liftShowsPrec)
+    , readsData
+    , readsUnaryWith
+    , showsUnaryWith
+    )
+#endif
 import Data.Functor.Identity (Identity(runIdentity))
 import Data.Monoid (Endo(Endo, appEndo), Monoid(mempty))
 import Data.Traversable (Traversable)
@@ -117,6 +131,10 @@ newtype ApplyEndo t f a = ApplyEndo {applyEndo :: f a}
     , Data
     , Typeable
 #endif
+#ifdef HAVE_FUNCTOR_CLASSES
+    , Eq1
+    , Ord1
+#endif
     )
 
 instance Applicative f => Applicative (ApplyEndo t f) where
@@ -126,6 +144,17 @@ instance Applicative f => Applicative (ApplyEndo t f) where
 instance Monad f => Monad (ApplyEndo t f) where
     return = ApplyEndo . return
     ApplyEndo x >>= f = ApplyEndo (x >>= applyEndo . f)
+
+#ifdef HAVE_FUNCTOR_CLASSES
+instance Read1 f => Read1 (ApplyEndo t f) where
+    liftReadsPrec rp rl =
+        readsData $ readsUnaryWith (liftReadsPrec rp rl) "ApplyEndo" ApplyEndo
+
+instance Show1 f => Show1 (ApplyEndo t f) where
+    liftShowsPrec sp sl d (ApplyEndo x) =
+        showsUnaryWith (liftShowsPrec sp sl) "ApplyEndo" d x
+#endif
+    -- HAVE_FUNCTOR_CLASSES
 
 -- | Apply endomorphism using provided \"default\" value.
 apply :: Applicative f => a -> Endo a -> ApplyEndo t f a
