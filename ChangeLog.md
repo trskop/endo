@@ -1,6 +1,14 @@
 # ChangeLog / ReleaseNotes
 
 
+## Version 0.3.0.1
+
+* Using CPP to get rid of redundant import warning when compiled without
+  `Data.Functor.Classes`, i.e. when compiled with base <4.9 and
+  [transformers][] <0.5. (**minor change**)
+* Uploaded to [Hackage][]: <http://hackage.haskell.org/package/endo-0.3.0.1>
+
+
 ## Version 0.3.0.0
 
 * Introducing type `:->` to simplify type signatures of endomorphism folding
