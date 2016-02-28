@@ -55,7 +55,7 @@ import Control.Monad (Monad)
 import Data.Foldable (Foldable(foldMap))
 import Data.Function
     ( (.)
-#if HAVE_FUNCTOR_CLASSES
+#ifdef HAVE_FUNCTOR_CLASSES
     -- This is to supress redundant import warning.
     , ($)
 #endif
