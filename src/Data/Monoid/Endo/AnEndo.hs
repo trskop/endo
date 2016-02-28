@@ -6,17 +6,13 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE TypeFamilies #-}
 
-#ifdef KIND_POLYMORPHIC_TYPEABLE
+#ifdef HAVE_KIND_POLYMORPHIC_TYPEABLE
 {-# LANGUAGE DeriveDataTypeable #-}
 #endif
 
-#if MIN_VERSION_base(4,7,0)
--- Module Data.Proxy, that defines Proxy data type, was introduced in
--- base == 4.7.0.0.
-#define HAVE_PROXY
-#endif
-
-#if MIN_VERSION_transformers(0,5,0) || MIN_VERSION_base(4,9,0)
+#if !MIN_VERSION_base(4,9,0) && MIN_VERSION_transformers(0,5,0)
+-- Definitions in Data.Functor.Classes from transformers >=0.5 are compatible
+-- with those in base >=4.9, therefore we can enable them.
 #define HAVE_FUNCTOR_CLASSES
 #endif
 
@@ -83,7 +79,7 @@ import GHC.Generics (Generic)
 import Text.Read (Read)
 import Text.Show (Show)
 
-#ifdef KIND_POLYMORPHIC_TYPEABLE
+#ifdef HAVE_KIND_POLYMORPHIC_TYPEABLE
 import Data.Data (Data, Typeable)
 #endif
 
@@ -198,7 +194,7 @@ newtype WrappedFoldable f a = WrapFoldable {getFoldable :: f a}
     , Read
     , Show
     , Traversable
-#ifdef KIND_POLYMORPHIC_TYPEABLE
+#ifdef HAVE_KIND_POLYMORPHIC_TYPEABLE
     , Data
     , Typeable
 #endif

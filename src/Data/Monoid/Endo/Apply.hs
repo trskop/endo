@@ -6,7 +6,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE TypeFamilies #-}
 
-#ifdef KIND_POLYMORPHIC_TYPEABLE
+#ifdef HAVE_KIND_POLYMORPHIC_TYPEABLE
 {-# LANGUAGE DeriveDataTypeable #-}
 #endif
 
@@ -72,7 +72,7 @@ import Prelude (seq)
 import Control.Applicative (Applicative(pure))
 import Control.Monad
     ( Monad((>>=))
-#ifdef APPLICATIVE_MONAD
+#ifdef HAVE_APPLICATIVE_MONAD
     , void
 #else
     , liftM
@@ -82,7 +82,7 @@ import Data.Foldable (Foldable)
 import Data.Function
     ( (.)
     , ($)
-#ifndef APPLICATIVE_MONAD
+#ifndef HAVE_APPLICATIVE_MONAD
     , const
 #endif
     )
@@ -103,7 +103,7 @@ import Data.Monoid (Endo(Endo, appEndo), Monoid(mempty))
 import Data.Traversable (Traversable)
 import GHC.Generics (Generic)
 
-#ifdef KIND_POLYMORPHIC_TYPEABLE
+#ifdef HAVE_KIND_POLYMORPHIC_TYPEABLE
 import Data.Data (Data, Typeable)
 #endif
 
@@ -129,7 +129,7 @@ newtype ApplyEndo t f a = ApplyEndo {applyEndo :: f a}
     , Generic
     , Monad
     , Traversable
-#ifdef KIND_POLYMORPHIC_TYPEABLE
+#ifdef HAVE_KIND_POLYMORPHIC_TYPEABLE
     , Data
     , Typeable
 #endif
@@ -165,7 +165,7 @@ applyF defaultValue endo = ApplyEndo $ (`appEndo` defaultValue) <$> endo
 data Mempty
   deriving
     ( Generic
-#ifdef KIND_POLYMORPHIC_TYPEABLE
+#ifdef HAVE_KIND_POLYMORPHIC_TYPEABLE
     , Typeable
 #endif
     )
@@ -201,7 +201,7 @@ applyMempty_ = runIdentity . applyMempty
 joinApplyMempty
     ::  ( Monad m
         , Monoid a
-#ifndef APPLICATIVE_MONAD
+#ifndef HAVE_APPLICATIVE_MONAD
         , Applicative m
 #endif
         )
@@ -213,11 +213,23 @@ joinApplyMempty = (>>= applyMempty)
 
 -- {{{ ApplyEndo Def ----------------------------------------------------------
 
+-- $applyEndoDef
+--
+-- Apply endomorphism to a default value 'def' from 'Default'. See also
+-- following packages:
+--
+-- * <https://hackage.haskell.org/package/data-default-extra data-default-extra>
+--
+-- * <https://hackage.haskell.org/package/data-default data-default>
+--
+-- Both of those packages provide additional instances to 'Default' type
+-- class.
+
 -- | Type tag identifying usage of 'def' from 'Default'.
 data Def
   deriving
     ( Generic
-#ifdef KIND_POLYMORPHIC_TYPEABLE
+#ifdef HAVE_KIND_POLYMORPHIC_TYPEABLE
     , Typeable
 #endif
     )
@@ -253,7 +265,7 @@ applyDef_ = runIdentity . applyDef
 joinApplyDef
     ::  ( Monad m
         , Default a
-#ifndef APPLICATIVE_MONAD
+#ifndef HAVE_APPLICATIVE_MONAD
         , Applicative m
 #endif
         )
@@ -268,7 +280,7 @@ joinApplyDef = (>>= applyDef)
 data Reader
   deriving
     ( Generic
-#ifdef KIND_POLYMORPHIC_TYPEABLE
+#ifdef HAVE_KIND_POLYMORPHIC_TYPEABLE
     , Typeable
 #endif
     )
@@ -320,7 +332,7 @@ joinApplyReader = (>>= applyEndo)
 data Modify
   deriving
     ( Generic
-#ifdef KIND_POLYMORPHIC_TYPEABLE
+#ifdef HAVE_KIND_POLYMORPHIC_TYPEABLE
     , Typeable
 #endif
     )
@@ -354,7 +366,7 @@ joinApplyModify = (>>= applyEndo)
 data Modify'
   deriving
     ( Generic
-#ifdef KIND_POLYMORPHIC_TYPEABLE
+#ifdef HAVE_KIND_POLYMORPHIC_TYPEABLE
     , Typeable
 #endif
     )
@@ -388,7 +400,7 @@ joinApplyModify' = (>>= applyEndo)
 
 -- {{{ Helper functions (not exported) ----------------------------------------
 
-#ifndef APPLICATIVE_MONAD
+#ifndef HAVE_APPLICATIVE_MONAD
 void :: Monad m => m a -> m ()
 void = liftM $ const ()
 #endif

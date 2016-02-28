@@ -14,7 +14,7 @@
 -- |
 -- Module:       $HEADER$
 -- Description:  Generic folding for various endomorphism representations.
--- Copyright:    (c) 2014-2015, Peter Trško
+-- Copyright:    (c) 2014-2016, Peter Trško
 -- License:      BSD3
 --
 -- Maintainer:   peter.trsko@gmail.com
@@ -65,11 +65,19 @@ module Data.Monoid.Endo.Fold
     )
   where
 
-import Control.Applicative (Applicative(pure), Const(Const))
+import Control.Applicative
+    ( Applicative(pure)
+#ifndef HAVE_FUNCTOR_CONST_MODULE
+    , Const(Const)
+#endif
+    )
 import Control.Monad (Monad(return))
 import Data.Either (Either(Right))
 import Data.Function ((.), id)
 import Data.Functor (Functor(fmap))
+#ifdef HAVE_FUNCTOR_CONST_MODULE
+import Data.Functor.Const (Const(Const))
+#endif
 import Data.Functor.Identity (Identity(Identity))
 import Data.Maybe (Maybe(Just))
 import Data.Monoid (Dual(Dual), Endo, Monoid(mempty), (<>))
@@ -289,7 +297,7 @@ instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (IdentityT f r) where
 #ifdef HAVE_EXCEPTT
 instance
     ( Monad m
-#ifndef APPLICATIVE_MONAD
+#ifndef HAVE_APPLICATIVE_MONAD
     , Functor m
 #endif
     , FoldEndoArgs r
@@ -309,7 +317,7 @@ instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (ListT f r) where
 
 instance
     ( Monad m
-#ifndef APPLICATIVE_MONAD
+#ifndef HAVE_APPLICATIVE_MONAD
     , Functor m
 #endif
     , FoldEndoArgs r
@@ -327,7 +335,7 @@ instance (Applicative f, FoldEndoArgs r) => FoldEndoArgs (ReaderT r' f r) where
 
 instance
     ( Monad m
-#ifndef APPLICATIVE_MONAD
+#ifndef HAVE_APPLICATIVE_MONAD
     , Functor m
 #endif
     , Monoid w
@@ -341,7 +349,7 @@ instance
 
 instance
     ( Monad m
-#ifndef APPLICATIVE_MONAD
+#ifndef HAVE_APPLICATIVE_MONAD
     , Functor m
 #endif
     , Monoid w

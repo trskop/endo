@@ -52,7 +52,7 @@ build-type:             Simple
 cabal-version:          >=1.10
 
 -- See https://github.com/trskop/endo/blob/master/.travis.yml for more details.
-tested-with:            GHC ==7.6.3, GHC ==7.8.4, GHC ==7.10.3
+tested-with:            GHC ==7.6.3, GHC ==7.8.4, GHC ==7.10.3, GHC ==8.0.1
 
 -- Examples require lens and optparse-applicative packages in addition to this
 -- packackage's dependencies. When using sandbox it is possible to use "cabal
@@ -105,11 +105,31 @@ library
     , between >=0.9 && <1
     , data-default-class ==0.0.*
 
-  if impl(GHC >= 7.8)
-    cpp-options:        -DHAVE_MINIMAL_PRAGMA
-                        -DKIND_POLYMORPHIC_TYPEABLE
-  if impl(GHC >= 7.9)
-    cpp-options:        -DAPPLICATIVE_MONAD
+  if impl(GHC >=7.8)
+    cpp-options:
+      -DHAVE_KIND_POLYMORPHIC_TYPEABLE
+      -DHAVE_MINIMAL_PRAGMA
+
+      -- Module Data.Proxy, that defines Proxy data type, was
+      -- introduced in base ==4.7.0.0, i.e. GHC 7.8.1.
+      -DHAVE_PROXY
+
+  if impl(GHC >=7.10)
+    cpp-options:
+      -- Applicative became supper class of Monad in base ==4.8 which was
+      -- bundled with GHC 7.10.1 release.
+      -DHAVE_APPLICATIVE_MONAD
+
+  if impl(GHC >=8.0)
+    cpp-options:
+      -- Definition of Const moved in to its own module Data.Functor.Const in
+      -- base 4.9.0.0, i.e. GHC 8.0.1.
+      -DHAVE_FUNCTOR_CONST_MODULE
+
+      -- Module Data.Functor.Classes has moved from transformers in to base
+      -- 4.9.0.0, but the definitions in that module are compatible
+      -- only with transformers >=0.5.
+      -DHAVE_FUNCTOR_CLASSES
 
   ghc-options:          -Wall
   if flag(pedantic)
