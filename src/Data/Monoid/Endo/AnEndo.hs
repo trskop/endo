@@ -58,7 +58,7 @@ import Data.Function
 #if HAVE_FUNCTOR_CLASSES
     -- This is to supress redundant import warning.
     , ($)
-#else
+#endif
     , id
     )
 import Data.Functor (Functor)
