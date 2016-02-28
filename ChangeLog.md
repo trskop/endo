@@ -19,6 +19,7 @@
 * Providing `Eq1`, `Ord1`, `Read1` and `Show1` instances if built with
   [transformers package][transformers] >=0.5 or base >=4.9 (i.e. GHC
   >=8.0.1) is available. (**new**)
+* Providing `Generic1` instance for `WrappedFoldable`. (**new**)
 * Bumped upper bound of [transformers package][transformers] to include 0.5.\*
   versions. (**change**)
 * Synchronized API documentation of `Data.Monoid.Endo.Fold` with README.
