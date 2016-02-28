@@ -43,6 +43,8 @@ module Data.Monoid.Endo.Apply
     , joinApplyMempty
 
     -- ** ApplyEndo Def
+    --
+    -- $applyEndoDef
     , Def
     , applyDef
     , applyDef_
@@ -101,7 +103,7 @@ import Data.Functor.Classes
 import Data.Functor.Identity (Identity(runIdentity))
 import Data.Monoid (Endo(Endo, appEndo), Monoid(mempty))
 import Data.Traversable (Traversable)
-import GHC.Generics (Generic)
+import GHC.Generics (Generic, Generic1)
 
 #ifdef HAVE_KIND_POLYMORPHIC_TYPEABLE
 import Data.Data (Data, Typeable)
@@ -127,6 +129,7 @@ newtype ApplyEndo t f a = ApplyEndo {applyEndo :: f a}
     , Foldable
     , Functor
     , Generic
+    , Generic1
     , Monad
     , Traversable
 #ifdef HAVE_KIND_POLYMORPHIC_TYPEABLE

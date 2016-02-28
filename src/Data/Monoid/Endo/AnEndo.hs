@@ -75,7 +75,7 @@ import Data.Monoid
     , (<>)
     )
 import Data.Traversable (Traversable)
-import GHC.Generics (Generic)
+import GHC.Generics (Generic, Generic1)
 import Text.Read (Read)
 import Text.Show (Show)
 
@@ -190,6 +190,7 @@ newtype WrappedFoldable f a = WrapFoldable {getFoldable :: f a}
     , Foldable
     , Functor
     , Generic
+    , Generic1
     , Monad
     , Read
     , Show
