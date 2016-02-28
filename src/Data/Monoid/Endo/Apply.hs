@@ -69,9 +69,9 @@ module Data.Monoid.Endo.Apply
 
 import Prelude (seq)
 
-import Control.Applicative (Applicative((<*>), pure))
+import Control.Applicative (Applicative(pure))
 import Control.Monad
-    ( Monad((>>=), return)
+    ( Monad((>>=))
 #ifdef APPLICATIVE_MONAD
     , void
 #else
@@ -123,9 +123,11 @@ import Data.Monoid.Endo.FromEndo (FromEndo(..))
 -- property, which decides what is the correct \"default value\".
 newtype ApplyEndo t f a = ApplyEndo {applyEndo :: f a}
   deriving
-    ( Foldable
+    ( Applicative
+    , Foldable
     , Functor
     , Generic
+    , Monad
     , Traversable
 #ifdef KIND_POLYMORPHIC_TYPEABLE
     , Data
@@ -136,14 +138,6 @@ newtype ApplyEndo t f a = ApplyEndo {applyEndo :: f a}
     , Ord1
 #endif
     )
-
-instance Applicative f => Applicative (ApplyEndo t f) where
-    pure = ApplyEndo . pure
-    ApplyEndo f <*> ApplyEndo x = ApplyEndo (f <*> x)
-
-instance Monad f => Monad (ApplyEndo t f) where
-    return = ApplyEndo . return
-    ApplyEndo x >>= f = ApplyEndo (x >>= applyEndo . f)
 
 #ifdef HAVE_FUNCTOR_CLASSES
 instance Read1 f => Read1 (ApplyEndo t f) where
