@@ -53,7 +53,14 @@ module Data.Monoid.Endo.AnEndo
 import Control.Applicative (Applicative)
 import Control.Monad (Monad)
 import Data.Foldable (Foldable(foldMap))
-import Data.Function (($), (.), id)
+import Data.Function
+    ( (.)
+#if HAVE_FUNCTOR_CLASSES
+    -- This is to supress redundant import warning.
+    , ($)
+#else
+    , id
+    )
 import Data.Functor (Functor)
 #ifdef HAVE_FUNCTOR_CLASSES
 import Data.Functor.Classes
