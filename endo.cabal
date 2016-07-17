@@ -103,7 +103,13 @@ library
     -- }}} Distributed with GHC or Haskell Platform ---------------------------
 
     , between >=0.9 && <1
-    , data-default-class ==0.0.* || 0.1.*
+    , data-default-class ==0.0.* || ==0.1.*
+    , tagged >=0.7 && <1
+    , overloaded-records >=0.4 && <1
+
+  if impl(GHC >=7.4)
+    cpp-options:
+      -DHAVE_CONSTRAINT_KIND
 
   if impl(GHC >=7.8)
     cpp-options:
