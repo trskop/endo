@@ -118,3 +118,10 @@ cabal.project.local
 .HTF/
 .ghc.environment.*
 # }}} Haskell.gitignore #######################################################
+
+# {{{ Local ###################################################################
+
+# Let people decide what LTS version to use.
+stack.yaml
+
+# }}} Local ###################################################################
