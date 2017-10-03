@@ -10,7 +10,9 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 #endif
 
-#if MIN_VERSION_transformers(0,5,0) || MIN_VERSION_base(4,9,0)
+#if !MIN_VERSION_base(4,9,0) && MIN_VERSION_transformers(0,5,0)
+-- Definitions in Data.Functor.Classes from transformers >=0.5 are compatible
+-- with those in base >=4.9, therefore we can enable them.
 #define HAVE_FUNCTOR_CLASSES
 #endif
 
