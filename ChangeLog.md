@@ -1,6 +1,11 @@
 # ChangeLog / ReleaseNotes
 
 
+## Version HEAD
+
+* Don't redefine `HAVE_FUNCTOR_CLASSES` macro when using GHC >=8.
+
+
 ## Version 0.3.0.1
 
 * Using CPP to get rid of redundant import warning when compiled without

@@ -20,7 +20,7 @@
 -- Module:       $HEADER$
 -- Description:  ApplyEndo provides easier endomorphism evaluation in cases
 --               when there is an "obvious" default value.
--- Copyright:    (c) 2015-2016, Peter Trško
+-- Copyright:    (c) 2015-2017, Peter Trško
 -- License:      BSD3
 --
 -- Maintainer:   peter.trsko@gmail.com
