@@ -14,17 +14,18 @@
 *.rar
 *.zip
 *.gz
+*.tgz
 *.bzip
 *.bz2
 *.xz
 *.lzma
 *.cab
 
-#packing-only formats
+# Packing-only formats
 *.iso
 *.tar
 
-#package management formats
+# Package management formats
 *.dmg
 *.xpi
 *.gem
@@ -47,30 +48,36 @@
 
 # Linux trash folder which might appear on any partition or disk
 .Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
 # }}} Global/Linux.gitignore ##################################################
 
-# {{{ Global/TortoiseGit.gitignore ############################################
-# Project-level settings
-/.tgitconfig
-# }}} Global/TortoiseGit.gitignore ############################################
-
 # {{{ Global/Vim.gitignore ####################################################
-# swap
-[._]*.s[a-w][a-z]
-[._]s[a-w][a-z]
-# session
+# Swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
+
+# Session
 Session.vim
-# temporary
+
+# Temporary
 .netrwhist
 *~
-# auto-generated tag files
+# Auto-generated tag files
 tags
 # }}} Global/Vim.gitignore ####################################################
 
 # {{{ Global/Windows.gitignore ################################################
-# Windows image file caches
+# Windows thumbnail cache files
 Thumbs.db
 ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
 
 # Folder config file
 Desktop.ini
@@ -105,5 +112,9 @@ cabal.sandbox.config
 *.prof
 *.aux
 *.hp
+*.eventlog
 .stack-work/
+cabal.project.local
+.HTF/
+.ghc.environment.*
 # }}} Haskell.gitignore #######################################################
