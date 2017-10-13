@@ -100,8 +100,8 @@ import Control.Monad.Trans.Writer (WriterT)
 import qualified Control.Monad.Trans.Writer.Strict as Strict (WriterT)
 
 import Data.Monoid.Endo.AnEndo
-    ( AnEndo(..)
-    , WrappedFoldable(..)
+    ( AnEndo(EndoOperatesOn, aDualEndo, anEndo)
+    , WrappedFoldable(WrapFoldable, getFoldable)
     , embedDualEndoWith
     , embedEndoWith
     )

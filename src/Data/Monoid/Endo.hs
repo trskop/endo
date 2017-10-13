@@ -26,7 +26,7 @@ module Data.Monoid.Endo
     where
 
 import Data.Functor (Functor(fmap))
-import Data.Monoid (Endo(..))
+import Data.Monoid (Endo(Endo, appEndo))
 
 import Data.Function.Between ((~@~), (<~@~))
 

@@ -118,7 +118,7 @@ import qualified Control.Monad.State.Class as MonadState (state)
 
 import Data.Default.Class (Default(def))
 
-import Data.Monoid.Endo.FromEndo (FromEndo(..))
+import Data.Monoid.Endo.FromEndo (FromEndo(EndoOperatedOn, fromEndo))
 
 
 -- | There are cases when it is \"obvious\" what is the default value, which
