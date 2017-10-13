@@ -75,10 +75,12 @@ import Control.Monad (Monad(return))
 import Data.Either (Either(Right))
 import Data.Function ((.), id)
 import Data.Functor (Functor(fmap))
+import Data.Functor.Compose (Compose)
 #ifdef HAVE_FUNCTOR_CONST_MODULE
 import Data.Functor.Const (Const(Const))
 #endif
 import Data.Functor.Identity (Identity(Identity))
+import Data.Functor.Product (Product)
 import Data.Maybe (Maybe(Just))
 import Data.Monoid (Dual(Dual), Endo, Monoid(mempty), (<>))
 import System.IO (IO)
@@ -96,8 +98,6 @@ import Control.Monad.Trans.State (StateT)
 import qualified Control.Monad.Trans.State.Strict as Strict (StateT)
 import Control.Monad.Trans.Writer (WriterT)
 import qualified Control.Monad.Trans.Writer.Strict as Strict (WriterT)
-import Data.Functor.Compose (Compose)
-import Data.Functor.Product (Product)
 
 import Data.Monoid.Endo.AnEndo
     ( AnEndo(..)
@@ -254,10 +254,6 @@ instance FoldEndoArgs r => FoldEndoArgs (Maybe r) where
     foldEndoArgs     = Just . foldEndoArgs
     dualFoldEndoArgs = Just . dualFoldEndoArgs
 
--- {{{ Transformers -----------------------------------------------------------
-
--- {{{ Functor Transformers ---------------------------------------------------
-
 instance
     (Applicative f, Applicative g, FoldEndoArgs r)
     => FoldEndoArgs (Compose f g r)
@@ -276,7 +272,7 @@ instance
     foldEndoArgs     = pure . foldEndoArgs
     dualFoldEndoArgs = pure . dualFoldEndoArgs
 
--- }}} Functor Transformers ---------------------------------------------------
+-- {{{ Transformers -----------------------------------------------------------
 
 -- {{{ Monad Transformers -----------------------------------------------------
 
