@@ -3,6 +3,7 @@
 
 ## Version HEAD
 
+* Dropped support of GHC 7.6.3.
 * Don't redefine `HAVE_FUNCTOR_CLASSES` macro when using GHC >=8.
 
 
