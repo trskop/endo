@@ -135,10 +135,6 @@ library
       -- only with transformers >=0.5.
       -DHAVE_FUNCTOR_CLASSES
 
-      -- Package base ==4.9.0.0 introduces Data.Semigroup, which was originally
-      -- defined in semigroups package.
-      -DHAVE_SEMIGROUPS
-
   ghc-options:          -Wall
   if flag(pedantic)
     if impl(GHC <8)
